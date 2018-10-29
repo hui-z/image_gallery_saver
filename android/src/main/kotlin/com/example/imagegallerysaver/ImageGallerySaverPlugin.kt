@@ -1,17 +1,26 @@
 package com.example.imagegallerysaver
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Environment
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
-class ImageGallerySaverPlugin(): MethodCallHandler {
+class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandler {
+
   companion object {
     @JvmStatic
-    fun registerWith(registrar: Registrar): Unit {
+    fun registerWith(registrar: Registrar) {
       val channel = MethodChannel(registrar.messenger(), "image_gallery_saver")
-      channel.setMethodCallHandler(ImageGallerySaverPlugin())
+      channel.setMethodCallHandler(ImageGallerySaverPlugin(registrar))
     }
   }
 
@@ -26,7 +35,7 @@ class ImageGallerySaverPlugin(): MethodCallHandler {
 
   private fun saveImageToGallery(bmp: Bitmap): Boolean {
     val context = registrar.activeContext().applicationContext
-    val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + "image_saver_gallery"
+    val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + "image_gallery_saver"
     val appDir = File(storePath)
     if (!appDir.exists()) {
       appDir.mkdir()
@@ -35,7 +44,7 @@ class ImageGallerySaverPlugin(): MethodCallHandler {
     val file = File(appDir, fileName)
     try {
       val fos = FileOutputStream(file)
-      val isSuccess = bmp.compress(Bitmap.CompressFormat.JPEG, 60, fos)
+      val isSuccess = bmp.compress(Bitmap.CompressFormat.PNG, 60, fos)
       fos.flush()
       fos.close()
       val uri = Uri.fromFile(file)
