@@ -1,8 +1,8 @@
 name: image_gallery_saver
-description: A new flutter plugin project.
-version: 0.0.1
-author: quicey <1308484463@qq.com>
-homepage:
+description: A new flutter plugin project for save image to gallery_
+version: 0.0.2
+author: quicey <quiceyxu@gmail.com>
+homepage: https://github.com/hui-z/image_gallery_saver
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
