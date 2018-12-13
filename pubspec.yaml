@@ -1,6 +1,6 @@
 name: image_gallery_saver
-description: A new flutter plugin project for save image to gallery_
-version: 0.0.2
+description: A new flutter plugin project for save image to gallery, iOS need to add the following keys to your Info.plist file, the key is called Privacy - Photo Library Additions Usage Description in the visual editor.
+version: 0.1.1
 author: quicey <quiceyxu@gmail.com>
 homepage: https://github.com/hui-z/image_gallery_saver
 
