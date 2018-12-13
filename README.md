@@ -1,4 +1,9 @@
 # image_gallery_saver
+
+[![Build Status](https://travis-ci.org/hui-z/image_gallery_saver.svg?branch=master)](https://travis-ci.org/hui-z/image_gallery_saver#)
+[![pub package](https://img.shields.io/pub/v/image_gallery_saver.svg)](https://pub.dartlang.org/packages/image_gallery_saver)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
+
 We use image_picker to selecte images from the Android and iOS image library, but it can't save image to gallery，this plugin can provide this feature.
 
 ## Usage
