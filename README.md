@@ -12,7 +12,7 @@ To use this plugin, add image_gallery_saver as a dependency in your pubspec.yaml
 
 ## iOS
 Add the following keys to your Info.plist file, located in <project root>/ios/Runner/Info.plist:
- NSPhotoLibraryAddUsageDescription - describe why your app needs permission for the photo library. This is called Privacy - Photo Library Additions Usage Description in the visual editor
+ * NSPhotoLibraryAddUsageDescription - describe why your app needs permission for the photo library. This is called Privacy - Photo Library Additions Usage Description in the visual editor
  
  ##  Android
  No configuration required - the plugin should work out of the box.
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
             title: 'Flutter Demo',
             theme: ThemeData(
-            p   rimarySwatch: Colors.blue,
+                primarySwatch: Colors.blue,
             ),
             home: MyHomePage(),
         );
@@ -60,8 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                     child: Container(
                         child: RaisedButton(
-                        onPressed: _saved,
-                        child: Text("保存屏幕截图"),
+                            onPressed: _saved,
+                            child: Text("保存屏幕截图"),
                         ),
                         width: 100,
                         height: 50,
