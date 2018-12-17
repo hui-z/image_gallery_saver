@@ -32,19 +32,28 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(""),
+          title: Text("Save image to gallery"),
         ),
-        body: RepaintBoundary(
-          key: _globalKey,
-          child: Center(
-            child: Container(
-              child: RaisedButton(
-                onPressed: _saved,
-                child: Text("保存屏幕截图"),
+        body: Center(
+          child: Column(
+            children: <Widget>[
+              RepaintBoundary(
+                key: _globalKey,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  color: Colors.red,
+                ),
               ),
-              width: 100,
-              height: 50,
-            ),
+              Container(
+                child: RaisedButton(
+                  onPressed: _saved,
+                  child: Text("保存到相册"),
+                ),
+                width: 100,
+                height: 50,
+              )
+            ],
           ),
         ));
   }
@@ -55,5 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ui.Image image = await boundary.toImage();
     ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     final result = await ImageGallerySaver.save(byteData.buffer.asUint8List());
+    print(result);
   }
 }

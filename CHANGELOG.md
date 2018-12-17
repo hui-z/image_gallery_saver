@@ -1,3 +1,7 @@
+## 0.1.2
+* Remove hard coded path - image_gallery_saver in Android
+## 0.1.1
+* Updated README and Description
 ## 0.1.0
 * Updated README and CHANGELOG
 * Add LICENSE
