@@ -1,6 +1,8 @@
 package com.example.imagegallerysaver
 
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -35,7 +37,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
 
   private fun saveImageToGallery(bmp: Bitmap): Boolean {
     val context = registrar.activeContext().applicationContext
-    val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + "image_gallery_saver"
+    val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
     val appDir = File(storePath)
     if (!appDir.exists()) {
       appDir.mkdir()
@@ -54,5 +56,22 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
       e.printStackTrace()
     }
     return false
+  }
+
+  private fun getApplicationName(): String {
+    val context = registrar.activeContext().applicationContext
+    var ai: ApplicationInfo? = null
+    try {
+        ai = context.packageManager.getApplicationInfo(context.packageName, 0)
+    } catch (e: PackageManager.NameNotFoundException) {
+    }
+    var appName: String
+    if (ai != null) {
+      val charSequence = context.packageManager.getApplicationLabel(ai)
+      appName = StringBuilder(charSequence.length).append(charSequence).toString()
+    } else {
+      appName = "image_gallery_saver"
+    }
+    return  appName
   }
 }

@@ -21,6 +21,8 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
       }
     }
 
+    
+    /// finish saving，if has error，parameters error will not nill
     @objc func didFinishSaving(image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         result?(error == nil)
     }
