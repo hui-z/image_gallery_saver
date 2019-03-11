@@ -1,3 +1,5 @@
+## 1.0.0
+* Updated Kotlin Gradle plugin version
 ## 0.1.2
 * Remove hard coded path - image_gallery_saver in Android
 ## 0.1.1
