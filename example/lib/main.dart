@@ -3,6 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+
+import 'package:permission_handler/permission_handler.dart';
+
 import 'dart:ui' as ui;
 
 void main() => runApp(MyApp());
@@ -27,6 +30,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   GlobalKey _globalKey = GlobalKey();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    PermissionHandler().requestPermissions(<PermissionGroup>[
+      PermissionGroup.storage, // 在这里添加需要的权限
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
