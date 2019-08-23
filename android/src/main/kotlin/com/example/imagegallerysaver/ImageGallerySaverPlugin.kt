@@ -27,23 +27,33 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
   }
 
   override fun onMethodCall(call: MethodCall, result: Result): Unit {
-    if (call.method == "saveImageToGallery") {
-      val image = call.arguments as ByteArray
-      result.success(saveImageToGallery(BitmapFactory.decodeByteArray(image,0,image.size)))
-    } else {
-      result.notImplemented()
+    when {
+        call.method == "saveImageToGallery" -> {
+          val image = call.arguments as ByteArray
+          result.success(saveImageToGallery(BitmapFactory.decodeByteArray(image,0,image.size)))
+        }
+        call.method == "saveFileToGallery" -> {
+          val path = call.arguments as String
+          result.success(saveFileToGallery(path))
+        }
+        else -> result.notImplemented()
     }
+
   }
 
-  private fun saveImageToGallery(bmp: Bitmap): Boolean {
-    val context = registrar.activeContext().applicationContext
+  private fun generateFile(): File {
     val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
     val appDir = File(storePath)
     if (!appDir.exists()) {
       appDir.mkdir()
     }
     val fileName = System.currentTimeMillis().toString() + ".png"
-    val file = File(appDir, fileName)
+    return File(appDir, fileName)
+  }
+
+  private fun saveImageToGallery(bmp: Bitmap): Boolean {
+    val context = registrar.activeContext().applicationContext
+    val file = generateFile()
     try {
       val fos = FileOutputStream(file)
       val isSuccess = bmp.compress(Bitmap.CompressFormat.PNG, 60, fos)
@@ -58,6 +68,22 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
     return false
   }
 
+  private fun saveFileToGallery(filePath: String): Boolean {
+    val context = registrar.activeContext().applicationContext
+    return try {
+      val originalFile = File(filePath)
+      val file = generateFile()
+      originalFile.copyTo(file)
+
+      val uri = Uri.fromFile(file)
+      context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
+      true
+    } catch (e: IOException) {
+      e.printStackTrace()
+      false
+    }
+  }
+
   private fun getApplicationName(): String {
     val context = registrar.activeContext().applicationContext
     var ai: ApplicationInfo? = null
@@ -66,12 +92,14 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
     } catch (e: PackageManager.NameNotFoundException) {
     }
     var appName: String
-    if (ai != null) {
+    appName = if (ai != null) {
       val charSequence = context.packageManager.getApplicationLabel(ai)
-      appName = StringBuilder(charSequence.length).append(charSequence).toString()
+      StringBuilder(charSequence.length).append(charSequence).toString()
     } else {
-      appName = "image_gallery_saver"
+      "image_gallery_saver"
     }
     return  appName
   }
+
+
 }
