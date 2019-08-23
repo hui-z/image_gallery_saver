@@ -1,3 +1,8 @@
+## 1.2.0
+
+* Support video save and file path to gallery
+* Add example for save video and net image
+
 ## 1.1.0
 
 * Upgrade kotlin(1.3.20) and gradle build plugin version(3.3.0).
