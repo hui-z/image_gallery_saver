@@ -13,17 +13,38 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
       self.result = result
       if call.method == "saveImageToGallery" {
-          if let arguments = (call.arguments as? FlutterStandardTypedData)?.data, let image = UIImage(data: arguments) {
-              UIImageWriteToSavedPhotosAlbum(image, self, #selector(didFinishSaving(image:error:contextInfo:)), nil)
-          }
+        guard let imageData = (call.arguments as? FlutterStandardTypedData)?.data, let image = UIImage(data: imageData) else { return }
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(didFinishSavingImage(image:error:contextInfo:)), nil)
+      } else if (call.method == "saveFileToGallery") {
+        guard let path = call.arguments as? String else { return }
+        if (isImageFile(filename: path)) {
+            if let image = UIImage(contentsOfFile: path) {
+                 UIImageWriteToSavedPhotosAlbum(image, self, #selector(didFinishSavingImage(image:error:contextInfo:)), nil)
+            }
+        } else {
+            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(path)) {
+                UISaveVideoAtPathToSavedPhotosAlbum(path, self, #selector(didFinishSavingVideo(videoPath:error:contextInfo:)), nil)
+            }
+        }
       } else {
-          result(FlutterMethodNotImplemented)
+        result(FlutterMethodNotImplemented)
       }
     }
 
-    
     /// finish saving，if has error，parameters error will not nill
-    @objc func didFinishSaving(image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
+    @objc func didFinishSavingImage(image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         result?(error == nil)
+    }
+    
+    @objc func didFinishSavingVideo(videoPath: String, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
+        result?(error == nil)
+    }
+    
+    func isImageFile(filename: String) -> Bool {
+        return filename.hasSuffix(".jpg")
+            || filename.hasSuffix(".png")
+            || filename.hasSuffix(".JPEG")
+            || filename.hasSuffix(".JPG")
+            || filename.hasSuffix(".PNG")
     }
 }
