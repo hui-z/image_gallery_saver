@@ -82,12 +82,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/image_gallery_saver.dart">
+        <entry file="file://$PROJECT_DIR$/test/image_gallery_saver_test.dart">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="165">
               <caret line="11" column="49" selection-start-line="11" selection-start-column="49" selection-end-line="11" selection-end-column="49" />
               <folding>
-                <element signature="e#0#20#0" expanded="true" />
+                <element signature="e#0#25#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -108,7 +108,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../.pub-cache/hosted/pub.flutter-io.cn/dio-2.1.13/lib/src/options.dart">
+        <entry file="file://$PROJECT_DIR$/lib/image_gallery_saver.dart">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1755">
               <caret line="121" column="13" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="13" />
@@ -130,6 +130,7 @@
       <find>buildto</find>
       <find>permi</find>
       <find>stream</find>
+      <find>fonts-droid</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -658,6 +659,16 @@
           <caret line="3" selection-start-line="3" selection-end-line="7" selection-end-column="3" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" selection-start-line="3" selection-end-line="7" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
