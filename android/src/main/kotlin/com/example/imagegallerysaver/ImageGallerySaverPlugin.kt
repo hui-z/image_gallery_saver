@@ -41,46 +41,49 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
 
   }
 
-  private fun generateFile(): File {
+  private fun generateFile(extension: String = ""): File {
     val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
     val appDir = File(storePath)
     if (!appDir.exists()) {
       appDir.mkdir()
     }
-    val fileName = System.currentTimeMillis().toString() + ".png"
+    var fileName = System.currentTimeMillis().toString()
+    if (extension.isNotEmpty()) {
+      fileName += ("." + extension)
+    }
     return File(appDir, fileName)
   }
 
-  private fun saveImageToGallery(bmp: Bitmap): Boolean {
+  private fun saveImageToGallery(bmp: Bitmap): String {
     val context = registrar.activeContext().applicationContext
-    val file = generateFile()
+    val file = generateFile("png")
     try {
       val fos = FileOutputStream(file)
-      val isSuccess = bmp.compress(Bitmap.CompressFormat.PNG, 60, fos)
+      bmp.compress(Bitmap.CompressFormat.PNG, 60, fos)
       fos.flush()
       fos.close()
       val uri = Uri.fromFile(file)
       context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
-      return isSuccess
+      return uri.toString()
     } catch (e: IOException) {
       e.printStackTrace()
     }
-    return false
+    return ""
   }
 
-  private fun saveFileToGallery(filePath: String): Boolean {
+  private fun saveFileToGallery(filePath: String): String {
     val context = registrar.activeContext().applicationContext
     return try {
       val originalFile = File(filePath)
-      val file = generateFile()
+      val file = generateFile(originalFile.extension)
       originalFile.copyTo(file)
 
       val uri = Uri.fromFile(file)
       context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
-      true
+      return uri.toString()
     } catch (e: IOException) {
       e.printStackTrace()
-      false
+      ""
     }
   }
 

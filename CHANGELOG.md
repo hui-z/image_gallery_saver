@@ -1,3 +1,8 @@
+## 1.2.1
+
+* Support return path for Android.
+* Fix bug(save video fail for Android).
+
 ## 1.2.0
 
 * Support video save and file path to gallery
