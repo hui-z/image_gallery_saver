@@ -1,3 +1,8 @@
+## 1.2.2
+
+* Migrate to AndroidX
+* optimize git ignore
+
 ## 1.2.1
 
 * Support return path for Android.
