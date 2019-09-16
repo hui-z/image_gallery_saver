@@ -8,3 +8,5 @@
 pubspec.lock
 
 build/
+
+*.iml
