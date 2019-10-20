@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var appDocDir = await getTemporaryDirectory();
     String savePath = appDocDir.path + "/temp.mp4";
     await Dio().download("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", savePath);
-    final result = await ImageGallerySaver.saveFile(savePath);
+    final result = await ImageGallerySaver.saveFile(savePath, "test", "test");
     print(result);
  }
 }
