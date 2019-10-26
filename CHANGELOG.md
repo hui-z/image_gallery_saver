@@ -1,3 +1,8 @@
+## 1.3.0
+
+* Define clang module for static ios builds
+* Cleanup example project
+
 ## 1.2.2
 
 * Migrate to AndroidX
