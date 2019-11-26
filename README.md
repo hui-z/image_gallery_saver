@@ -11,7 +11,7 @@ We use the image_picker plugin to select images from the Android and iOS image l
 To use this plugin, add image_gallery_saver as a dependency in your pubspec.yaml file.
 
 ## iOS
-Your project need create with swift
+Your project need create with swift.
 Add the following keys to your Info.plist file, located in <project root>/ios/Runner/Info.plist:
  * NSPhotoLibraryAddUsageDescription - describe why your app needs permission for the photo library. This is called Privacy - Photo Library Additions Usage Description in the visual editor
  
