@@ -8,7 +8,7 @@ We use the image_picker plugin to select images from the Android and iOS image l
 
 ## Usage
 
-To use this plugin, add image_gallery_saver as a dependency in your pubspec.yaml file.
+To use this plugin, add `image_gallery_saver` as a dependency in your pubspec.yaml file.
 
 ## iOS
 Your project need create with swift.
