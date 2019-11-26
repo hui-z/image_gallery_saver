@@ -19,7 +19,7 @@ Add the following keys to your Info.plist file, located in <project root>/ios/Ru
  You need to ask for storage permission to save an image to the gallery. You can handle the storage permission using [flutter_permission_handler](https://github.com/BaseflowIT/flutter-permission-handler).
 
 ## Example
-save net image
+Saving an image from the internet
 ``` dart
 _save() async {
     var response = await Dio().get("https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg", options: Options(responseType: ResponseType.bytes));
@@ -28,7 +28,7 @@ _save() async {
   }
 ```
 
-save net video
+Saving a video from the internet
 ``` dart
 _saveVideo() async {
     var appDocDir = await getTemporaryDirectory();
