@@ -16,7 +16,7 @@ Add the following keys to your Info.plist file, located in <project root>/ios/Ru
  * NSPhotoLibraryAddUsageDescription - describe why your app needs permission for the photo library. This is called Privacy - Photo Library Additions Usage Description in the visual editor
  
  ##  Android
- need to ask for storage permission to save the image. You can using https://github.com/BaseflowIT/flutter-permission-handler to handle permission.
+ You need to ask for storage permission to save an image to the gallery. You can handle the storage permission using [flutter_permission_handler](https://github.com/BaseflowIT/flutter-permission-handler).
 
 ## Example
 save net image
