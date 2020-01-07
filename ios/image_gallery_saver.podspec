@@ -17,6 +17,5 @@ A new flutter plugin project.
   s.dependency 'Flutter'
 
   s.ios.deployment_target = '8.0'
-  s.swift_version = '4.0'
 end
 
