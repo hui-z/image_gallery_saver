@@ -46,11 +46,12 @@
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
     NSLog(@"image = %@, error = %@, contextInfo = %@", image, error, contextInfo);
-	resultBack(@"fail");
+    resultBack(@"fail");
 }
 
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error
                                                  contextInfo:(void *)contextInfo {
     NSLog(@"保存视频完成");
+    resultBack(@"fail");
 }
 @end
