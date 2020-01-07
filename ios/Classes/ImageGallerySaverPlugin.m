@@ -23,7 +23,7 @@
 			UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
 		}else{
 			if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(path)) {
-                UISaveVideoAtPathToSavedPhotosAlbum(urlStr, self, @selector(video:didFinishSavingWithError:contextInfo:), nil);
+                UISaveVideoAtPathToSavedPhotosAlbum(path, self, @selector(video:didFinishSavingWithError:contextInfo:), nil);
             }
 		}
     } else {
@@ -32,7 +32,7 @@
 }
 
 - (BOOL)isImageFile:(NSString*)filename {
-	NSString *extensionName = path.pathExtension;
+	NSString *extensionName = filename.pathExtension;
 	if ([extensionName.lowercaseString isEqualToString:@"jpg"]
 		||[extensionName.lowercaseString isEqualToString:@"png"]
 		||[extensionName.lowercaseString isEqualToString:@"JPEG"]
