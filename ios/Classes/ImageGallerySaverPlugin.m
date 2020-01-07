@@ -49,22 +49,8 @@
 	resultBack(@"fail");
 }
 
-
-#pragma mark --- 图片保存完成后，调用的回调方法:
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
-{
-    // Was there an error?
-    if (error != NULL)
-    {
-        // Show error message…
-        NSLog(@"保存照片过程中发生错误，错误信息:%@",error.localizedDescription);
-    }
-    else  // No errors
-    {
-        // Show message image successfully saved
-        NSLog(@"Save image successful");
-    }
-	
-	resultBack(@"fail");
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error
+                                                 contextInfo:(void *)contextInfo {
+    NSLog(@"保存视频完成");
 }
 @end
