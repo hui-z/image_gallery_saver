@@ -18,7 +18,7 @@
 		UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
     } else if ([@"saveFileToGallery" isEqualToString:call.method]) {
 		NSString *path = call.arguments;
-		if([isImageFile:path]){
+		if([self isImageFile:path]){
 			UIImage *image=[UIImage imageNamed:path];
 			UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
 		}else{
