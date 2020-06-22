@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -96,7 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
       Permission.storage,
     ].request();
 
-    print(statuses[Permission.storage]);
+    final info = statuses[Permission.storage].toString();
+    print(info);
+    _toastInfo(info);
   }
 
   _saveScreen() async {
@@ -107,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final result =
         await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
     print(result);
+    _toastInfo(result.toString());
   }
 
   _getHttp() async {
@@ -116,14 +120,23 @@ class _MyHomePageState extends State<MyHomePage> {
     final result =
         await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
     print(result);
+    _toastInfo(result);
   }
 
   _saveVideo() async {
     var appDocDir = await getTemporaryDirectory();
     String savePath = appDocDir.path + "/temp.mp4";
-    await Dio().download(
-        "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", savePath);
+    String fileUrl =
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+    await Dio().download(fileUrl, savePath, onReceiveProgress: (count, total) {
+      print((count / total * 100).toStringAsFixed(0) + "%");
+    });
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
+    _toastInfo(result);
+  }
+
+  _toastInfo(String info) {
+    Fluttertoast.showToast(msg: info, toastLength: Toast.LENGTH_LONG);
   }
 }
