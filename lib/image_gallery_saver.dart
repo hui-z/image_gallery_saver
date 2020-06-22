@@ -9,10 +9,14 @@ class ImageGallerySaver {
 
   /// save image to Gallery
   /// imageBytes can't null
-  static Future saveImage(Uint8List imageBytes) async {
+  static Future saveImage(Uint8List imageBytes, {int quality = 80, String name}) async {
     assert(imageBytes != null);
     final result =
-    await _channel.invokeMethod('saveImageToGallery', imageBytes);
+    await _channel.invokeMethod('saveImageToGallery', <String, dynamic> {
+      'imageBytes': imageBytes,
+      'quality': quality,
+      'name': name
+    });
     return result;
   }
 

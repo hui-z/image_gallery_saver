@@ -29,8 +29,11 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
   override fun onMethodCall(call: MethodCall, result: Result): Unit {
     when {
         call.method == "saveImageToGallery" -> {
-          val image = call.arguments as ByteArray
-          result.success(saveImageToGallery(BitmapFactory.decodeByteArray(image,0,image.size)))
+          val image = call.argument<ByteArray>("imageBytes") ?: return
+          val quality = call.argument<Int>("quality") ?: return
+          val name = call.argument<String>("name")
+
+          result.success(saveImageToGallery(BitmapFactory.decodeByteArray(image,0,image.size), quality, name))
         }
         call.method == "saveFileToGallery" -> {
           val path = call.arguments as String
@@ -41,29 +44,31 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
 
   }
 
-  private fun generateFile(extension: String = ""): File {
+  private fun generateFile(extension: String = "", name: String? = null): File {
     val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
     val appDir = File(storePath)
     if (!appDir.exists()) {
       appDir.mkdir()
     }
-    var fileName = System.currentTimeMillis().toString()
+    var fileName = name?:System.currentTimeMillis().toString()
     if (extension.isNotEmpty()) {
-      fileName += ("." + extension)
+      fileName += (".$extension")
     }
     return File(appDir, fileName)
   }
 
-  private fun saveImageToGallery(bmp: Bitmap): String {
+  private fun saveImageToGallery(bmp: Bitmap, quality: Int, name: String?): String {
     val context = registrar.activeContext().applicationContext
-    val file = generateFile("png")
+    val file = generateFile("jpg", name = name)
     try {
       val fos = FileOutputStream(file)
-      bmp.compress(Bitmap.CompressFormat.PNG, 60, fos)
+      println("ImageGallerySaverPlugin $quality")
+      bmp.compress(Bitmap.CompressFormat.JPEG, quality, fos)
       fos.flush()
       fos.close()
       val uri = Uri.fromFile(file)
       context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
+      bmp.recycle()
       return uri.toString()
     } catch (e: IOException) {
       e.printStackTrace()

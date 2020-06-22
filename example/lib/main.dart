@@ -38,9 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _requestPermission();
 
-//    PermissionHandler().requestPermissions(<PermissionGroup>[
-//      PermissionGroup.storage, // 在这里添加需要的权限
-//    ]);
   }
 
   @override
@@ -64,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.only(top: 15),
                 child: RaisedButton(
                   onPressed: _saveScreen,
-                  child: Text("保存页面图片到相册"),
+                  child: Text("Save Local Image"),
                 ),
                 width: 200,
                 height: 44,
@@ -73,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.only(top: 15),
                 child: RaisedButton(
                   onPressed: _getHttp,
-                  child: Text("保存网络图片到相册"),
+                  child: Text("Save network image"),
                 ),
                 width: 200,
                 height: 44,
@@ -82,7 +79,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.only(top: 15),
                 child: RaisedButton(
                   onPressed: _saveVideo,
-                  child: Text("保存网络视频到相册"),
+                  child: Text("Save network video"),
+                ),
+                width: 200,
+                height: 44,
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                child: RaisedButton(
+                  onPressed: _saveGif,
+                  child: Text("Save Gif to gallery"),
                 ),
                 width: 200,
                 height: 44,
@@ -117,8 +123,21 @@ class _MyHomePageState extends State<MyHomePage> {
     var response = await Dio().get(
         "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg",
         options: Options(responseType: ResponseType.bytes));
-    final result =
-        await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+    final result = await ImageGallerySaver.saveImage(
+        Uint8List.fromList(response.data),
+        quality: 60,
+        name: "hello");
+    print(result);
+    _toastInfo(result);
+  }
+
+  _saveGif() async {
+    var appDocDir = await getTemporaryDirectory();
+    String savePath = appDocDir.path + "/temp.gif";
+    String fileUrl =
+        "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
+    await Dio().download(fileUrl, savePath);
+    final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
     _toastInfo(result);
   }
