@@ -24,7 +24,21 @@
 		}else{
 			if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(path)) {
                 UISaveVideoAtPathToSavedPhotosAlbum(path, self, @selector(video:didFinishSavingWithError:contextInfo:), nil);
-            }
+            } else {
+                            //GIF图片保存
+                                          __weak typeof(self) weakSelf = self;
+                                          NSData *data =[ [NSFileManager defaultManager] contentsAtPath:path];
+                                          [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                                              if (@available(iOS 9, *)) {
+                                                  [[PHAssetCreationRequest creationRequestForAsset] addResourceWithType:PHAssetResourceTypePhoto data:data options:nil];
+                                              } else {
+                                                  // Fallback on earlier versions
+                                              }
+                                          }completionHandler:^(BOOL success, NSError * _Nullable error) {
+                                              __strong typeof(weakSelf) strongSelf = weakSelf;
+                                              strongSelf->resultBack(@"fail");
+                                          }];
+                          }
 		}
     } else {
         result(FlutterMethodNotImplemented);
