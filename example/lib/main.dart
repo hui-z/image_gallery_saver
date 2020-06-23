@@ -128,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
         quality: 60,
         name: "hello");
     print(result);
-    _toastInfo(result);
+    _toastInfo("$result");
   }
 
   _saveGif() async {
@@ -139,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await Dio().download(fileUrl, savePath);
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
-    _toastInfo(result);
+    _toastInfo("$result");
   }
 
   _saveVideo() async {
@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
-    _toastInfo(result);
+    _toastInfo("$result");
   }
 
   _toastInfo(String info) {
