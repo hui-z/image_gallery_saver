@@ -1,3 +1,10 @@
+## 1.5.0
+* Save image with JPG and Support special quality(ios & Android)
+* Support special Image name for Android
+* Upgrade libraries and dependence
+* fix docs
+* Add more example
+
 ## 1.3.0
 
 * Define clang module for static ios builds

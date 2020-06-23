@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'image_gallery_saver'
-  s.version          = '1.3.0'
+  s.version          = '1.5.0'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
 A new flutter plugin project.
