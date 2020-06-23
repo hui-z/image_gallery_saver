@@ -11,7 +11,7 @@ We use the `image_picker` plugin to select images from the Android and iOS image
 To use this plugin, add `image_gallery_saver` as a dependency in your pubspec.yaml file. For example:
 ```yaml
 dependencies:
-  image_gallery_saver: '^1.2.2'
+  image_gallery_saver: '^1.5.0'
 ```
 
 ## iOS
@@ -23,16 +23,21 @@ Add the following keys to your Info.plist file, located in <project root>/ios/Ru
  You need to ask for storage permission to save an image to the gallery. You can handle the storage permission using [flutter_permission_handler](https://github.com/BaseflowIT/flutter-permission-handler).
 
 ## Example
-Saving an image from the internet
+Saving an image from the internet, quality and name is option
 ``` dart
 _save() async {
-    var response = await Dio().get("https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg", options: Options(responseType: ResponseType.bytes));
-    final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
-    print(result);
+   var response = await Dio().get(
+           "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg",
+           options: Options(responseType: ResponseType.bytes));
+   final result = await ImageGallerySaver.saveImage(
+           Uint8List.fromList(response.data),
+           quality: 60,
+           name: "hello");
+   print(result);
   }
 ```
 
-Saving a video from the internet
+Saving file(ig: video/gif/others) from the internet
 ``` dart
 _saveVideo() async {
     var appDocDir = await getTemporaryDirectory();
