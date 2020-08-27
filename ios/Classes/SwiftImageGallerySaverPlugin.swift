@@ -16,8 +16,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as? [String: Any] ?? [String: Any]()
         guard let imageData = (arguments["imageBytes"] as? FlutterStandardTypedData)?.data,
             let image = UIImage(data: imageData),
-            let quality = arguments["quality"] as? Int ,
-            let name = arguments["name"]
+            let quality = arguments["quality"] as? Int
             else { return }
         let newImage = image.jpegData(compressionQuality: CGFloat(quality / 100))!
         UIImageWriteToSavedPhotosAlbum(UIImage(data: newImage) ?? image , self, #selector(didFinishSavingImage(image:error:contextInfo:)), nil)
