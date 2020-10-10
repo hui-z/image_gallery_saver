@@ -1,3 +1,6 @@
+## 1.6.0
+* Support iOS return save path
+
 ## 1.5.0
 * Save image with JPG and Support special quality(ios & Android)
 * Support special Image name for Android
