@@ -39,12 +39,12 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
     func saveVideo(_ path: String) {
         var videoIds: [String] = []
         
-        PHPhotoLibrary.shared().performChanges {
+        PHPhotoLibrary.shared().performChanges( {
             let req = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: URL(string: path)!)
             if let videoId = req?.placeholderForCreatedAsset?.localIdentifier {
                 videoIds.append(videoId)
             }
-        } completionHandler: { [unowned self] (success, error) in
+        }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
                 if (success) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: videoIds, options: nil)
@@ -56,18 +56,18 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                     }
                 }
             }
-        }
+        })
     }
     
     func saveImage(_ image: UIImage) {
         var imageIds: [String] = []
         
-        PHPhotoLibrary.shared().performChanges {
+        PHPhotoLibrary.shared().performChanges( {
             let req = PHAssetChangeRequest.creationRequestForAsset(from: image)
             if let imageId = req.placeholderForCreatedAsset?.localIdentifier {
                 imageIds.append(imageId)
             }
-        } completionHandler: { [unowned self] (success, error) in
+        }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
                 if (success) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
@@ -83,18 +83,18 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                     
                 }
             }
-        }
+        })
     }
     
     func saveImageAtFileUrl(_ url: String) {
         var imageIds: [String] = []
         
-        PHPhotoLibrary.shared().performChanges {
+        PHPhotoLibrary.shared().performChanges( {
             let req = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: URL(string: url)!)
             if let imageId = req?.placeholderForCreatedAsset?.localIdentifier {
                 imageIds.append(imageId)
             }
-        } completionHandler: { [unowned self] (success, error) in
+        }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
                 if (success) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
@@ -110,7 +110,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                     
                 }
             }
-        }
+        })
     }
 
     /// finish saving，if has error，parameters error will not nill
