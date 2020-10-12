@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   const MethodChannel channel = MethodChannel('image_gallery_saver');
   final List<MethodCall> log = <MethodCall>[];
   bool response;
@@ -24,7 +26,13 @@ void main() {
     final bool result = await ImageGallerySaver.saveImage(imageBytes);
     expect(
       log,
-      <Matcher>[isMethodCall('saveImageToGallery', arguments: imageBytes)],
+      <Matcher>[
+        isMethodCall('saveImageToGallery', arguments: <String, dynamic>{
+          'imageBytes': imageBytes,
+          'quality': 80,
+          'name': null,
+        })
+      ],
     );
     expect(result, response);
   });
