@@ -48,7 +48,10 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             DispatchQueue.main.async {
                 if (success) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: videoIds, options: nil)
-                    let videoAsset = assetResult[0]
+                    guard let videoAsset = assetResult.firstObject else {
+                        self.result?(nil)
+                        return
+                    }
                     PHImageManager().requestAVAsset(forVideo: videoAsset, options: nil) { (avurlAsset, audioMix, info) in
                         if let urlStr = (avurlAsset as? AVURLAsset)?.url.absoluteString {
                             self.result?(urlStr)
@@ -71,7 +74,10 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             DispatchQueue.main.async {
                 if (success) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
-                    let imageAsset = assetResult[0]
+                    guard let imageAsset = assetResult.firstObject else {
+                        self.result?(nil)
+                        return
+                    }
                     let options = PHContentEditingInputRequestOptions()
                     options.canHandleAdjustmentData = { (adjustmeta)
                         -> Bool in true }
@@ -98,7 +104,10 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             DispatchQueue.main.async {
                 if (success) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
-                    let imageAsset = assetResult[0]
+                    guard let imageAsset = assetResult.firstObject else {
+                        self.result?(nil)
+                        return
+                    }
                     let options = PHContentEditingInputRequestOptions()
                     options.canHandleAdjustmentData = { (adjustmeta)
                         -> Bool in true }
