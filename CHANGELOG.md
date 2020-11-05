@@ -1,3 +1,9 @@
+## 1.6.2
+* fix crash on iOS when granting permission
+
+## 1.6.1
+* fix iOS Swift5.1 error
+
 ## 1.6.0
 * Support iOS return save path
 
