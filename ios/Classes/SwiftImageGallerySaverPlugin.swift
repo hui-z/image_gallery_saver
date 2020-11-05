@@ -46,12 +46,14 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
-                if (success) {
+                if (success && videoIds.count > 0) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: videoIds, options: nil)
-                    let videoAsset = assetResult[0]
-                    PHImageManager().requestAVAsset(forVideo: videoAsset, options: nil) { (avurlAsset, audioMix, info) in
-                        if let urlStr = (avurlAsset as? AVURLAsset)?.url.absoluteString {
-                            self.result?(urlStr)
+                    if (assetResult.count > 0) {
+                        let videoAsset = assetResult[0]
+                        PHImageManager().requestAVAsset(forVideo: videoAsset, options: nil) { (avurlAsset, audioMix, info) in
+                            if let urlStr = (avurlAsset as? AVURLAsset)?.url.absoluteString {
+                                self.result?(urlStr)
+                            }
                         }
                     }
                 }
@@ -69,18 +71,19 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
-                if (success) {
+                if (success && imageIds.count > 0) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
-                    let imageAsset = assetResult[0]
-                    let options = PHContentEditingInputRequestOptions()
-                    options.canHandleAdjustmentData = { (adjustmeta)
-                        -> Bool in true }
-                    imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
-                        if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
-                            self.result?(urlStr)
+                    if (assetResult.count > 0) {
+                        let imageAsset = assetResult[0]
+                        let options = PHContentEditingInputRequestOptions()
+                        options.canHandleAdjustmentData = { (adjustmeta)
+                            -> Bool in true }
+                        imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
+                            if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
+                                self.result?(urlStr)
+                            }
                         }
                     }
-                    
                 }
             }
         })
@@ -96,30 +99,22 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
-                if (success) {
+                if (success && imageIds.count > 0) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
-                    let imageAsset = assetResult[0]
-                    let options = PHContentEditingInputRequestOptions()
-                    options.canHandleAdjustmentData = { (adjustmeta)
-                        -> Bool in true }
-                    imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
-                        if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
-                            self.result?(urlStr)
+                    if (assetResult.count > 0) {
+                        let imageAsset = assetResult[0]
+                        let options = PHContentEditingInputRequestOptions()
+                        options.canHandleAdjustmentData = { (adjustmeta)
+                            -> Bool in true }
+                        imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
+                            if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
+                                self.result?(urlStr)
+                            }
                         }
                     }
-                    
                 }
             }
         })
-    }
-
-    /// finish saving，if has error，parameters error will not nill
-    @objc func didFinishSavingImage(image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
-        result?(error == nil)
-    }
-    
-    @objc func didFinishSavingVideo(videoPath: String, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
-        result?(error == nil)
     }
     
     func isImageFile(filename: String) -> Bool {
