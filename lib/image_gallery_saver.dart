@@ -9,22 +9,28 @@ class ImageGallerySaver {
 
   /// save image to Gallery
   /// imageBytes can't null
-  static Future saveImage(Uint8List imageBytes, {int quality = 80, String name}) async {
+  /// return Map type
+  /// for example:{"isSuccess":true, "filePath":String?}
+  static Future saveImage(Uint8List imageBytes, {int quality = 80, String name, bool isReturnImagePathOfIOS = false}) async {
     assert(imageBytes != null);
     final result =
     await _channel.invokeMethod('saveImageToGallery', <String, dynamic> {
       'imageBytes': imageBytes,
       'quality': quality,
-      'name': name
+      'name': name,
+      'isReturnImagePathOfIOS': isReturnImagePathOfIOS
     });
     return result;
   }
 
   /// Save the PNG，JPG，JPEG image or video located at [file] to the local device media gallery.
-  static Future saveFile(String file) async {
+  static Future saveFile(String file, {bool isReturnPathOfIOS = false}) async {
     assert(file != null);
     final result =
-    await _channel.invokeMethod('saveFileToGallery', file);
+    await _channel.invokeMethod('saveFileToGallery', <String, dynamic> {
+      'file': file,
+      'isReturnPathOfIOS': isReturnPathOfIOS
+    });
     return result;
   }
 

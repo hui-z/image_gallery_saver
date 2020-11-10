@@ -57,10 +57,10 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
     return File(appDir, fileName)
   }
 
-  private fun saveImageToGallery(bmp: Bitmap, quality: Int, name: String?): String {
+  private fun saveImageToGallery(bmp: Bitmap, quality: Int, name: String?): HashMap<String, Any?> {
     val context = registrar.activeContext().applicationContext
     val file = generateFile("jpg", name = name)
-    try {
+    return try {
       val fos = FileOutputStream(file)
       println("ImageGallerySaverPlugin $quality")
       bmp.compress(Bitmap.CompressFormat.JPEG, quality, fos)
@@ -69,14 +69,13 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
       val uri = Uri.fromFile(file)
       context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
       bmp.recycle()
-      return uri.toString()
+      SaveResultModel(uri.toString().isNotEmpty(), uri.toString(), null).toHashMap()
     } catch (e: IOException) {
-      e.printStackTrace()
+      SaveResultModel(false, null, e.toString()).toHashMap()
     }
-    return ""
   }
 
-  private fun saveFileToGallery(filePath: String): String {
+  private fun saveFileToGallery(filePath: String): HashMap<String, Any?> {
     val context = registrar.activeContext().applicationContext
     return try {
       val originalFile = File(filePath)
@@ -85,10 +84,9 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
 
       val uri = Uri.fromFile(file)
       context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
-      return uri.toString()
+      SaveResultModel(uri.toString().isNotEmpty(), uri.toString(), null).toHashMap()
     } catch (e: IOException) {
-      e.printStackTrace()
-      ""
+      SaveResultModel(false, null, e.toString()).toHashMap()
     }
   }
 
@@ -110,4 +108,16 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
   }
 
 
+}
+
+class SaveResultModel (var isSuccess: Boolean,
+                   var filePath: String? = null,
+                   var errorMessage: String? = null) {
+  fun toHashMap(): HashMap<String, Any?> {
+    val hashMap = HashMap<String, Any?>()
+    hashMap["isSuccess"] = isSuccess
+    hashMap["filePath"] = filePath
+    hashMap["errorMessage"] = errorMessage
+    return hashMap
+  }
 }

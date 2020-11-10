@@ -1,3 +1,6 @@
+## 1.6.3
+* Save result return more message
+
 ## 1.6.2
 * fix crash on iOS when granting permission
 
