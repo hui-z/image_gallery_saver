@@ -18,9 +18,12 @@ dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-  plugin:
-    androidPackage: com.example.imagegallerysaver
-    pluginClass: ImageGallerySaverPlugin
+  plugin:platforms:
+    android:
+      package: com.example.imagegallerysaver
+      pluginClass: ImageGallerySaverPlugin
+    ios:
+      pluginClass: ImageGallerySaverPlugin
 
 dev_dependencies:
   flutter_test:
