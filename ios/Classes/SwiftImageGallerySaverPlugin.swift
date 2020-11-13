@@ -3,7 +3,7 @@ import UIKit
 import Photos
 
 public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
-    let errorMessage = "保存失败,请检查全新是否开启"
+    let errorMessage = "保存失败,请检查权限是否开启"
     
     var result: FlutterResult?;
 
