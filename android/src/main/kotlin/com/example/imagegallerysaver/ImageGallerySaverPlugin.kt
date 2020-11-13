@@ -36,7 +36,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
           result.success(saveImageToGallery(BitmapFactory.decodeByteArray(image,0,image.size), quality, name))
         }
         call.method == "saveFileToGallery" -> {
-          val path = call.arguments as String
+          val path = call.argument<String>("file") ?: return
           result.success(saveFileToGallery(path))
         }
         else -> result.notImplemented()
