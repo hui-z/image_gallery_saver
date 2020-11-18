@@ -21,6 +21,10 @@ Add the following keys to your Info.plist file, located in <project root>/ios/Ru
  
  ##  Android
  You need to ask for storage permission to save an image to the gallery. You can handle the storage permission using [flutter_permission_handler](https://github.com/BaseflowIT/flutter-permission-handler).
+ In Android version 10, Open the manifest file and add this line to your application tag
+ ```
+ <application android:requestLegacyExternalStorage="true" .....>
+ ```
 
 ## Example
 Saving an image from the internet, quality and name is option
