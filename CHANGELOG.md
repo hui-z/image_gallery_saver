@@ -1,3 +1,6 @@
+## 1.6.6
+* fix ios bug
+
 ## 1.6.5
 * fix android bug
 
