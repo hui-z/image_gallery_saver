@@ -66,7 +66,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                         }
                     }
                 } else {
-                    self.saveResult(isSuccess: false, error: errorMessage)
+                    self.saveResult(isSuccess: false, error: self.errorMessage)
                 }
             }
         })
@@ -101,7 +101,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                         }
                     }
                 } else {
-                    self.saveResult(isSuccess: false, error: errorMessage)
+                    self.saveResult(isSuccess: false, error: self.errorMessage)
                 }
             }
         })
@@ -138,7 +138,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                         }
                     }
                 } else {
-                    self.saveResult(isSuccess: false, error: errorMessage)
+                    self.saveResult(isSuccess: false, error: self.errorMessage)
                 }
             }
         })
