@@ -1,3 +1,7 @@
+## 1.6.7
+
+- fix ios bug
+
 ## 1.6.6
 * fix ios bug
 
