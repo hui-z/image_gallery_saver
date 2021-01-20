@@ -45,7 +45,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar): MethodCallHandl
   }
 
   private fun generateFile(extension: String = "", name: String? = null): File {
-    val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
+    val storePath =  Environment.getExternalStorageDirectory().absolutePath + File.separator + Environment.DIRECTORY_PICTURES + File.separator + getApplicationName()
     val appDir = File(storePath)
     if (!appDir.exists()) {
       appDir.mkdir()
