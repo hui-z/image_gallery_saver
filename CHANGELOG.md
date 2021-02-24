@@ -1,5 +1,7 @@
-## 1.6.7
+## 1.6.8
+- Support android 11 save
 
+## 1.6.7
 - fix ios bug
 
 ## 1.6.6
