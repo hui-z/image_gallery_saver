@@ -13,7 +13,7 @@ class ImageGallerySaver {
   /// for example:{"isSuccess":true, "filePath":String?}
   static Future saveImage(Uint8List imageBytes,
       {int quality = 80,
-      String name,
+      String? name,
       bool isReturnImagePathOfIOS = false}) async {
     assert(imageBytes != null);
     final result =
