@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,7 +9,7 @@ void main() {
 
   const MethodChannel channel = MethodChannel('image_gallery_saver');
   final List<MethodCall> log = <MethodCall>[];
-  bool response;
+  bool? response;
 
   channel.setMockMethodCallHandler((MethodCall methodCall) async {
     log.add(methodCall);
@@ -23,7 +24,7 @@ void main() {
   test('saveImageToGallery test', () async {
     response = true;
     Uint8List imageBytes = Uint8List(16);
-    final bool result = await ImageGallerySaver.saveImage(imageBytes);
+    final bool? result = await (ImageGallerySaver.saveImage(imageBytes) as FutureOr<bool?>);
     expect(
       log,
       <Matcher>[
