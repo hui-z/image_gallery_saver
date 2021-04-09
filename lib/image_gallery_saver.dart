@@ -11,9 +11,9 @@ class ImageGallerySaver {
   /// imageBytes can't null
   /// return Map type
   /// for example:{"isSuccess":true, "filePath":String?}
-  static Future saveImage(Uint8List imageBytes,
+  static FutureOr<bool?> saveImage(Uint8List imageBytes,
       {int quality = 80,
-      String name,
+      String? name,
       bool isReturnImagePathOfIOS = false}) async {
     assert(imageBytes != null);
     final result =
