@@ -113,11 +113,13 @@ class _MyHomePageState extends State<MyHomePage> {
     RenderRepaintBoundary boundary =
         _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
-    ByteData byteData = await (image.toByteData(format: ui.ImageByteFormat.png) as FutureOr<ByteData>);
-    final result =
-        await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
-    print(result);
-    _toastInfo(result.toString());
+    ByteData? byteData = await (image.toByteData(format: ui.ImageByteFormat.png) as FutureOr<ByteData?>);
+    if (byteData != null) {
+      final result =
+      await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+      print(result);
+      _toastInfo(result.toString());
+    }
   }
 
   _getHttp() async {

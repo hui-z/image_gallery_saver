@@ -1,3 +1,6 @@
+## 1.6.9
+- optimization
+
 ## 1.6.8
 - Support android 11 save
 
