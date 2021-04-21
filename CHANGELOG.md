@@ -1,3 +1,6 @@
+## 1.6.10
+- Fix the problem that the value cannot be returned normally when multiple storage operations are performed concurrently.
+
 ## 1.6.9
 - optimization
 
