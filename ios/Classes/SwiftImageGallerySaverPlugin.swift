@@ -164,6 +164,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
     func isImageFile(filename: String) -> Bool {
         return filename.hasSuffix(".jpg")
             || filename.hasSuffix(".png")
+            || filename.hasSuffix(".jpeg")
             || filename.hasSuffix(".JPEG")
             || filename.hasSuffix(".JPG")
             || filename.hasSuffix(".PNG")
