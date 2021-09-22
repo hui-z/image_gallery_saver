@@ -1,3 +1,6 @@
+## 1.7.0
+- optimization
+
 ## 1.6.9
 - optimization
 
