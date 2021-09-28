@@ -59,30 +59,38 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
     private fun generateUri(extension: String = "", name: String? = null): Uri {
         var fileName = name ?: System.currentTimeMillis().toString()
         
-        var uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
-        val values = ContentValues()
-        values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            var uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+
+            val values = ContentValues()
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        }
-        val mimeType = getMIMEType(extension)
-        if (!TextUtils.isEmpty(mimeType)) {
-            values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-            if (mimeType!!.startsWith("video")) {
-                uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val mimeType = getMIMEType(extension)
+            if (!TextUtils.isEmpty(mimeType)) {
+                values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+                if (mimeType!!.startsWith("video")) {
+                    uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                     values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
                 }
             }
+            return applicationContext?.contentResolver?.insert(uri, values)!!
+        } else {
+            val storePath = Environment.getExternalStorageDirectory().absolutePath + File.separator + Environment.DIRECTORY_PICTURES
+            val appDir = File(storePath)
+            if (!appDir.exists()) {
+                appDir.mkdir()
+            }
+            if (extension.isNotEmpty()) {
+                fileName += (".$extension")
+            }
+            return Uri.fromFile(File(appDir, fileName))
         }
-        return applicationContext?.contentResolver?.insert(uri, values)!!
     }
 
     private fun getMIMEType(extension: String): String? {
         var type: String? = null;
         if (!TextUtils.isEmpty(extension)) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
         }
         return type
     }
