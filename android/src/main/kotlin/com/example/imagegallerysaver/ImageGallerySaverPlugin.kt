@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.os.Build
 import android.os.FileUtils
 import android.provider.MediaStore
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -63,13 +64,17 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
 
         val values = ContentValues()
         values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        }
         val mimeType = getMIMEType(extension)
         if (!TextUtils.isEmpty(mimeType)) {
             values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
             if (mimeType!!.startsWith("video")) {
                 uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
+                }
             }
         }
         return applicationContext?.contentResolver?.insert(uri, values)!!
@@ -108,9 +113,16 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
 
             val outputStream = context?.contentResolver?.openOutputStream(fileUri)!!
             val fileInputStream = FileInputStream(originalFile)
-            FileUtils.copy(fileInputStream, outputStream)
-            fileInputStream.close()
+
+            val buffer = ByteArray(10240)
+            var count = 0
+            while (fileInputStream.read(buffer).also { count = it } > 0) {
+                outputStream.write(buffer, 0, count)
+            }
+
+            outputStream.flush()
             outputStream.close()
+            fileInputStream.close()
 
             context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri))
             SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
