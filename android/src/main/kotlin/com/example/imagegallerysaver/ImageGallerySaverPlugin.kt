@@ -1,11 +1,14 @@
 package com.example.imagegallerysaver
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.os.Build
+import android.provider.MediaStore
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -14,8 +17,10 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
-import java.io.FileOutputStream
+import java.io.FileInputStream
 import java.io.IOException
+import android.text.TextUtils
+import android.webkit.MimeTypeMap
 
 
 class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
@@ -51,32 +56,57 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
     }
 
 
-    private fun generateFile(extension: String = "", name: String? = null): File {
-        val storePath = Environment.getExternalStorageDirectory().absolutePath + File.separator + Environment.DIRECTORY_PICTURES
-        val appDir = File(storePath)
-        if (!appDir.exists()) {
-            appDir.mkdir()
-        }
+    private fun generateUri(extension: String = "", name: String? = null): Uri {
         var fileName = name ?: System.currentTimeMillis().toString()
-        if (extension.isNotEmpty()) {
-            fileName += (".$extension")
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            var uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+
+            val values = ContentValues()
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+            val mimeType = getMIMEType(extension)
+            if (!TextUtils.isEmpty(mimeType)) {
+                values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+                if (mimeType!!.startsWith("video")) {
+                    uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
+                }
+            }
+            return applicationContext?.contentResolver?.insert(uri, values)!!
+        } else {
+            val storePath = Environment.getExternalStorageDirectory().absolutePath + File.separator + Environment.DIRECTORY_PICTURES
+            val appDir = File(storePath)
+            if (!appDir.exists()) {
+                appDir.mkdir()
+            }
+            if (extension.isNotEmpty()) {
+                fileName += (".$extension")
+            }
+            return Uri.fromFile(File(appDir, fileName))
         }
-        return File(appDir, fileName)
+    }
+
+    private fun getMIMEType(extension: String): String? {
+        var type: String? = null;
+        if (!TextUtils.isEmpty(extension)) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
+        }
+        return type
     }
 
     private fun saveImageToGallery(bmp: Bitmap, quality: Int, name: String?): HashMap<String, Any?> {
         val context = applicationContext
-        val file = generateFile("jpg", name = name)
+        val fileUri = generateUri("jpg", name = name)
         return try {
-            val fos = FileOutputStream(file)
+            val fos = context?.contentResolver?.openOutputStream(fileUri)!!
             println("ImageGallerySaverPlugin $quality")
             bmp.compress(Bitmap.CompressFormat.JPEG, quality, fos)
             fos.flush()
             fos.close()
-            val uri = Uri.fromFile(file)
-            context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
+            context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri))
             bmp.recycle()
-            SaveResultModel(uri.toString().isNotEmpty(), uri.toString(), null).toHashMap()
+            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
         } catch (e: IOException) {
             SaveResultModel(false, null, e.toString()).toHashMap()
         }
@@ -86,12 +116,23 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         val context = applicationContext
         return try {
             val originalFile = File(filePath)
-            val file = generateFile(originalFile.extension, name)
-            originalFile.copyTo(file)
+            val fileUri = generateUri(originalFile.extension, name)
 
-            val uri = Uri.fromFile(file)
-            context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
-            SaveResultModel(uri.toString().isNotEmpty(), uri.toString(), null).toHashMap()
+            val outputStream = context?.contentResolver?.openOutputStream(fileUri)!!
+            val fileInputStream = FileInputStream(originalFile)
+
+            val buffer = ByteArray(10240)
+            var count = 0
+            while (fileInputStream.read(buffer).also { count = it } > 0) {
+                outputStream.write(buffer, 0, count)
+            }
+
+            outputStream.flush()
+            outputStream.close()
+            fileInputStream.close()
+
+            context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri))
+            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
         } catch (e: IOException) {
             SaveResultModel(false, null, e.toString()).toHashMap()
         }
