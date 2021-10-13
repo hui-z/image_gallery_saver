@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -37,7 +38,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    _requestPermission();
+    if (!kIsWeb) {
+      _requestPermission();
+    }
 
   }
 
@@ -135,24 +138,32 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _saveGif() async {
-    var appDocDir = await getTemporaryDirectory();
-    String savePath = appDocDir.path + "/temp.gif";
-    String fileUrl =
-        "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
-    await Dio().download(fileUrl, savePath);
+    final fileUrl = "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
+    var appDocDirPath = "";
+
+    if (!kIsWeb) {
+      var appDocDirPath = (await getTemporaryDirectory()).path;
+      await Dio().download(fileUrl, appDocDirPath + "/temp.gif");
+    }
+    var savePath = appDocDirPath + "/temp.gif";
+
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
     _toastInfo("$result");
   }
 
   _saveVideo() async {
-    var appDocDir = await getTemporaryDirectory();
-    String savePath = appDocDir.path + "/temp.mp4";
-    String fileUrl =
-        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
-    await Dio().download(fileUrl, savePath, onReceiveProgress: (count, total) {
-      print((count / total * 100).toStringAsFixed(0) + "%");
-    });
+    final fileUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+    var appDocDirPath = "";
+
+    if (!kIsWeb) {
+      appDocDirPath = (await getTemporaryDirectory()).path;
+      await Dio().download(fileUrl, appDocDirPath + "/temp.mp4", onReceiveProgress: (count, total) {
+        print((count / total * 100).toStringAsFixed(0) + "%");
+      });
+    }
+    String savePath = appDocDirPath + "/temp.mp4";
+
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
     _toastInfo("$result");
