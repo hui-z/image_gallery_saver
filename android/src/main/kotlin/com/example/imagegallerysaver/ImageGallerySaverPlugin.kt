@@ -50,6 +50,10 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                 val name = call.argument<String>("name")
                 result.success(saveFileToGallery(path, name))
             }
+            call.method == "deleteImageFromGallery" -> {
+                val fileUri = call.argument<String>("identifier") ?: return
+                result.success(deleteImageFromGallery(fileUri))
+            }
             else -> result.notImplemented()
         }
 
@@ -95,6 +99,33 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         return type
     }
 
+    private fun deleteImageFromGallery(identifier: String): HashMap<String, Any?> {
+        val context = applicationContext
+        return try {
+            var where = MediaStore.MediaColumns.DATA + "=?"
+            var contentResolver = context!!.getContentResolver();
+            var filesUri = MediaStore.Files.getContentUri("external")
+            var selectionArgs = arrayOf(identifier)
+
+            var galleryIdentifiers = fetchGalleryImages()
+
+            for (i in galleryIdentifiers.indices) {
+                var galleryId = galleryIdentifiers[i]
+                if (galleryId.endsWith(identifier)) {
+                    var sel = arrayOf(galleryId)
+                    var deletedCount = contentResolver.delete(filesUri, where, sel)
+                    if (deletedCount != 1) {
+                        throw IOException("Could not remove " + identifier + " from photos")
+                    }
+                    break
+                }
+            }
+            DeleteResultModel(true, null).toHashMap()
+        } catch (e: IOException) {
+            DeleteResultModel(false, e.toString()).toHashMap()
+        }
+    }
+
     private fun saveImageToGallery(bmp: Bitmap, quality: Int, name: String?): HashMap<String, Any?> {
         val context = applicationContext
         val fileUri = generateUri("jpg", name = name)
@@ -106,9 +137,9 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
             fos.close()
             context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri))
             bmp.recycle()
-            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
+            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), name + ".jpg", null).toHashMap()
         } catch (e: IOException) {
-            SaveResultModel(false, null, e.toString()).toHashMap()
+            SaveResultModel(false, null, null, e.toString()).toHashMap()
         }
     }
 
@@ -132,10 +163,29 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
             fileInputStream.close()
 
             context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri))
-            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
+            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), originalFile.getName(), null).toHashMap()
         } catch (e: IOException) {
-            SaveResultModel(false, null, e.toString()).toHashMap()
+            SaveResultModel(false, null, null, e.toString()).toHashMap()
         }
+    }
+
+    fun fetchGalleryImages(): MutableList<String> {
+        val context = applicationContext
+
+        var columns = arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID)
+        var proj = arrayOf(MediaStore.Images.Media.DATA);
+
+        var imagecursor = context?.contentResolver?.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, proj, null, null, null);
+
+        var galleryImages = mutableListOf<String>()
+
+        for (i in imagecursor!!.getCount() downTo 1) {
+            imagecursor!!.moveToPosition(i - 1)
+            var dataColumnIndex = imagecursor!!.getColumnIndex(MediaStore.Images.Media.DATA)
+            galleryImages.add(imagecursor!!.getString(dataColumnIndex))
+        }
+
+        return galleryImages
     }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -158,11 +208,23 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
 
 class SaveResultModel(var isSuccess: Boolean,
                       var filePath: String? = null,
+                      var name: String? = null,
                       var errorMessage: String? = null) {
     fun toHashMap(): HashMap<String, Any?> {
         val hashMap = HashMap<String, Any?>()
         hashMap["isSuccess"] = isSuccess
         hashMap["filePath"] = filePath
+        hashMap["localIdentifier"] = name
+        hashMap["errorMessage"] = errorMessage
+        return hashMap
+    }
+}
+
+class DeleteResultModel(var isSuccess: Boolean,
+                      var errorMessage: String? = null) {
+    fun toHashMap(): HashMap<String, Any?> {
+        val hashMap = HashMap<String, Any?>()
+        hashMap["isSuccess"] = isSuccess
         hashMap["errorMessage"] = errorMessage
         return hashMap
     }
