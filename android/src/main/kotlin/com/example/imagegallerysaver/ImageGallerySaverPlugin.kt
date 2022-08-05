@@ -97,11 +97,11 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun saveImageToGallery(bmp: Bitmap, quality: Int, name: String?): HashMap<String, Any?> {
         val context = applicationContext
-        val fileUri = generateUri("jpg", name = name)
+        val fileUri = generateUri("png", name = name)
         return try {
             val fos = context?.contentResolver?.openOutputStream(fileUri)!!
             println("ImageGallerySaverPlugin $quality")
-            bmp.compress(Bitmap.CompressFormat.JPEG, quality, fos)
+            bmp.compress(Bitmap.CompressFormat.PNG, quality, fos)
             fos.flush()
             fos.close()
             context!!.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, fileUri))

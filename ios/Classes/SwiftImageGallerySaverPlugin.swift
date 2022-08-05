@@ -23,7 +23,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             let _ = arguments["name"],
             let isReturnImagePath = arguments["isReturnImagePathOfIOS"] as? Bool
             else { return }
-        let newImage = image.jpegData(compressionQuality: CGFloat(quality / 100))!
+        let newImage = image.pngData()!
         saveImage(UIImage(data: newImage) ?? image, isReturnImagePath: isReturnImagePath)
       } else if (call.method == "saveFileToGallery") {
         guard let arguments = call.arguments as? [String: Any],
