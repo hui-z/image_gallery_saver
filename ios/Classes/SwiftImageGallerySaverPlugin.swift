@@ -35,6 +35,8 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
         } else {
             if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(path)) {
                 saveVideo(path, isReturnImagePath: isReturnFilePath)
+            } else {
+             self.saveResult(isSuccess: false, error: "UIVideoAtPathIsCompatibleWithSavedPhotosAlbum is fail, \(path)")
             }
         }
       } else {
