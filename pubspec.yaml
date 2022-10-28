@@ -10,6 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  http: any
+  image: any
 
 
 # For information on the generic Dart part of this file, see the
@@ -24,8 +28,10 @@ flutter:
         pluginClass: ImageGallerySaverPlugin
       ios:
         pluginClass: ImageGallerySaverPlugin
+      web:
+        pluginClass: ImageGallerySaverWeb
+        fileName: image_gallery_saver_web.dart
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
