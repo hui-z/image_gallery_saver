@@ -8,6 +8,8 @@
 
 @implementation ImageGallerySaverPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftImageGallerySaverPlugin registerWithRegistrar:registrar];
+    if (registrar) {
+        [SwiftImageGallerySaverPlugin registerWithRegistrar:registrar];
+    }
 }
 @end
