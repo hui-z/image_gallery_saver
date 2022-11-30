@@ -6,7 +6,7 @@ void main() {
   testWidgets('Verify Widgets', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(new MyApp());
-    final Finder flatButtonPass = find.widgetWithText(RaisedButton, '保存屏幕截图');
+    final Finder flatButtonPass = find.widgetWithText(ElevatedButton, '保存屏幕截图');
     expect(flatButtonPass, findsOneWidget);
   });
 }

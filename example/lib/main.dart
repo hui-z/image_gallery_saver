@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -38,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     _requestPermission();
-
   }
 
   @override
@@ -60,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 padding: EdgeInsets.only(top: 15),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: _saveScreen,
                   child: Text("Save Local Image"),
                 ),
@@ -69,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 padding: EdgeInsets.only(top: 15),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: _getHttp,
                   child: Text("Save network image"),
                 ),
@@ -78,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 padding: EdgeInsets.only(top: 15),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: _saveVideo,
                   child: Text("Save network video"),
                 ),
@@ -87,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Container(
                 padding: EdgeInsets.only(top: 15),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: _saveGif,
                   child: Text("Save Gif to gallery"),
                 ),
@@ -113,10 +111,11 @@ class _MyHomePageState extends State<MyHomePage> {
     RenderRepaintBoundary boundary =
         _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
-    ByteData? byteData = await (image.toByteData(format: ui.ImageByteFormat.png));
+    ByteData? byteData =
+        await (image.toByteData(format: ui.ImageByteFormat.png));
     if (byteData != null) {
       final result =
-      await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+          await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
       print(result);
       _toastInfo(result.toString());
     }
