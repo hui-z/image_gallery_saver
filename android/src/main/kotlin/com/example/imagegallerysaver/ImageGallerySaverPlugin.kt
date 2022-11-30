@@ -27,15 +27,6 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
     private var applicationContext: Context? = null
     private var methodChannel: MethodChannel? = null
 
-
-    companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val instance = ImageGallerySaverPlugin()
-            instance.onAttachedToEngine(registrar.context(), registrar.messenger())
-        }
-    }
-
     override fun onMethodCall(call: MethodCall, result: Result): Unit {
         when {
             call.method == "saveImageToGallery" -> {
