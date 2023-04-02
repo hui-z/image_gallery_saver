@@ -36,9 +36,9 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                 val quality = call.argument<Int>("quality") ?: return
                 val name = call.argument<String>("name")
                 val folder = call.argument<String>("folder")
-                if (Build.VERSION.SDK_INT >= 29) {
+                if (Build.VERSION.SDK_INT >= 30) {
                     result.success(
-                        saveImageToGallery29(
+                        saveImageToGallery30(
                             applicationContext!!,
                             BitmapFactory.decodeByteArray(image, 0, image.size),
                             name ?: "",
@@ -59,14 +59,15 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                     )
                 }
             }
+
             call.method == "saveFileToGallery" -> {
                 val path = call.argument<String>("file") ?: return
                 val name = call.argument<String>("name")
                 val folder = call.argument<String>("folder")
 
-                if (Build.VERSION.SDK_INT >= 29) {
+                if (Build.VERSION.SDK_INT >= 30) {
                     result.success(
-                        saveFileToGallery29(
+                        saveFileToGallery30(
                             applicationContext!!,
                             path,
                             name ?: "",
@@ -77,6 +78,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(saveFileToGallery(path, name))
                 }
             }
+
             else -> result.notImplemented()
         }
     }
@@ -152,7 +154,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
      * android 10 以上版本
      */
     @TargetApi(Build.VERSION_CODES.Q)
-    fun saveImageToGallery29(
+    fun saveImageToGallery30(
         context: Context,
         image: Bitmap,
         name: String?,
@@ -206,7 +208,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     @TargetApi(Build.VERSION_CODES.Q)
-    private fun saveFileToGallery29(
+    private fun saveFileToGallery30(
         context: Context,
         filePath: String,
         name: String,
@@ -220,17 +222,17 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         if (fileName.contains(".")) {
             type = fileName.substringAfterLast(".")
         }
-        val isImage = type.equals("png", ignoreCase = true) ||
-            type.equals("webp", ignoreCase = true) ||
-            type.equals("jpg", ignoreCase = true) ||
-            type.equals("jpeg", ignoreCase = true) ||
-            type.equals("heic", ignoreCase = true)
-        type.equals("gif", ignoreCase = true)
-        type.equals("apng", ignoreCase = true)
-        type.equals("raw", ignoreCase = true)
-        type.equals("svg", ignoreCase = true)
-        type.equals("bmp", ignoreCase = true)
-        type.equals("tif", ignoreCase = true)
+        val isImage = type.equals("png", ignoreCase = true)
+                || type.equals("webp", ignoreCase = true)
+                || type.equals("jpg", ignoreCase = true)
+                || type.equals("jpeg", ignoreCase = true)
+                || type.equals("heic", ignoreCase = true)
+                || type.equals("gif", ignoreCase = true)
+                || type.equals("apng", ignoreCase = true)
+                || type.equals("raw", ignoreCase = true)
+                || type.equals("svg", ignoreCase = true)
+                || type.equals("bmp", ignoreCase = true)
+                || type.equals("tif", ignoreCase = true)
 
         filePath.substringAfterLast(".")
         val currentTime: Long = System.currentTimeMillis()
