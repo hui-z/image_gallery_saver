@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import Photos
+import MobileCoreServices
 
 public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
     let errorMessage = "保存失败,请检查权限是否开启"
@@ -72,7 +73,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         })
     }
-    
+
     func saveImage(_ image: UIImage, isReturnImagePath: Bool) {
         if !isReturnImagePath {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(didFinishSavingImage(image:error:contextInfo:)), nil)
@@ -81,32 +82,63 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
         
         var imageIds: [String] = []
         
-        PHPhotoLibrary.shared().performChanges( {
-            let req = PHAssetChangeRequest.creationRequestForAsset(from: image)
-            if let imageId = req.placeholderForCreatedAsset?.localIdentifier {
-                imageIds.append(imageId)
-            }
-        }, completionHandler: { [unowned self] (success, error) in
-            DispatchQueue.main.async {
-                if (success && imageIds.count > 0) {
-                    let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
-                    if (assetResult.count > 0) {
-                        let imageAsset = assetResult[0]
-                        let options = PHContentEditingInputRequestOptions()
-                        options.canHandleAdjustmentData = { (adjustmeta)
-                            -> Bool in true }
-                        imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
-                            if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
-                                self.saveResult(isSuccess: true, filePath: urlStr)
+        let imageType: CFString
+        if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, "gif" as CFString, nil)?.takeRetainedValue() {
+            imageType = uti
+        } else {
+            imageType = kUTTypePNG
+        }
+        
+        if let imageData = image.toData(type: imageType) {
+            PHPhotoLibrary.shared().performChanges({
+                let options = PHAssetResourceCreationOptions()
+                options.shouldMoveFile = true
+                let creationRequest = PHAssetCreationRequest.forAsset()
+                
+                creationRequest.addResource(with: .photo, data: imageData, options: options)
+                if imageType == kUTTypeGIF {
+                    creationRequest.addResource(with: .alternatePhoto, data: imageData, options: options)
+                }
+                
+                if let imageId = creationRequest.placeholderForCreatedAsset?.localIdentifier {
+                    imageIds.append(imageId)
+                }
+            }, completionHandler: { [unowned self] (success, error) in
+                DispatchQueue.main.async {
+                    if success && !imageIds.isEmpty {
+                        let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
+                        if (assetResult.count) > 0 {
+                            let imageAsset = assetResult[0]
+                            let options = PHContentEditingInputRequestOptions()
+                            options.canHandleAdjustmentData = { (adjustmeta) -> Bool in true }
+                            imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
+                                if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
+                                    self.saveResult(isSuccess: true, filePath: urlStr)
+                                }
                             }
                         }
+                    } else {
+                        self.saveResult(isSuccess: false, error: self.errorMessage)
                     }
-                } else {
-                    self.saveResult(isSuccess: false, error: self.errorMessage)
                 }
-            }
-        })
+            })
+        }
     }
+
+    extension UIImage {
+        func toData(type: CFString) -> Data? {
+            if type == kUTTypeGIF {
+                if let animatedImageData = self.animatedImageData {
+                    return animatedImageData
+                }
+            } else if let data = self.pngData() {
+                return data
+            }
+            
+            return nil
+        }
+    }
+
     
     func saveImageAtFileUrl(_ url: String, isReturnImagePath: Bool) {
         if !isReturnImagePath {
