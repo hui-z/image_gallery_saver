@@ -29,12 +29,16 @@ class ImageGallerySaver {
 
   /// Save the PNG，JPG，JPEG image or video located at [file] to the local device media gallery.
   static Future saveFile(String file,
-      {String? name, String? folder, bool isReturnPathOfIOS = false}) async {
+      {String? name,
+      String? folder,
+      bool isImage = true,
+      bool isReturnPathOfIOS = false}) async {
     final result =
         await _channel.invokeMethod('saveFileToGallery', <String, dynamic>{
       'file': file,
       'name': name,
       'folder': folder,
+      'isImage': isImage,
       'isReturnPathOfIOS': isReturnPathOfIOS
     });
     return result;

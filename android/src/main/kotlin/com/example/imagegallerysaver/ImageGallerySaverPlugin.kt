@@ -64,6 +64,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                 val path = call.argument<String>("file") ?: return
                 val name = call.argument<String>("name")
                 val folder = call.argument<String>("folder")
+                val isImage = call.argument<Boolean>("isImage") ?: true
 
                 if (Build.VERSION.SDK_INT >= 30) {
                     result.success(
@@ -72,6 +73,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                             path,
                             name ?: "",
                             folder ?: "",
+                            isImage,
                         ),
                     )
                 } else {
@@ -213,32 +215,35 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         filePath: String,
         name: String,
         folder: String,
+        isImage: Boolean = true,
     ): HashMap<String, Any?> {
         var fileName = filePath
         if (filePath.contains('/')) {
             fileName = filePath.substringAfterLast("/")
         }
-        var type = "png"
+        var suffix = "png"
         if (fileName.contains(".")) {
-            type = fileName.substringAfterLast(".")
+            suffix = fileName.substringAfterLast(".", "")
         }
-        val isImage = type.equals("png", ignoreCase = true)
-                || type.equals("webp", ignoreCase = true)
-                || type.equals("jpg", ignoreCase = true)
-                || type.equals("jpeg", ignoreCase = true)
-                || type.equals("heic", ignoreCase = true)
-                || type.equals("gif", ignoreCase = true)
-                || type.equals("apng", ignoreCase = true)
-                || type.equals("raw", ignoreCase = true)
-                || type.equals("svg", ignoreCase = true)
-                || type.equals("bmp", ignoreCase = true)
-                || type.equals("tif", ignoreCase = true)
+        val isImageSuffix = suffix.equals("png", ignoreCase = true)
+                || suffix.equals("webp", ignoreCase = true)
+                || suffix.equals("jpg", ignoreCase = true)
+                || suffix.equals("jpeg", ignoreCase = true)
+                || suffix.equals("heic", ignoreCase = true)
+                || suffix.equals("gif", ignoreCase = true)
+                || suffix.equals("apng", ignoreCase = true)
+                || suffix.equals("raw", ignoreCase = true)
+                || suffix.equals("svg", ignoreCase = true)
+                || suffix.equals("bmp", ignoreCase = true)
+                || suffix.equals("tif", ignoreCase = true)
 
-        filePath.substringAfterLast(".")
+        if (isImage && !isImageSuffix) {
+            suffix = "png"
+        }
         val currentTime: Long = System.currentTimeMillis()
         val imageDate: String =
             SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault()).format(Date(currentTime))
-        val screenshotFileNameTemplate = "%s.$type"
+        val screenshotFileNameTemplate = "%s.$suffix"
         val mImageFileName: String =
             name.ifEmpty { String.format(screenshotFileNameTemplate, imageDate) }
         val values = ContentValues()
@@ -263,7 +268,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         try {
             values.put(
                 MediaStore.MediaColumns.MIME_TYPE,
-                if (isImage) "image/$type" else "video/$type",
+                if (isImage) "image/$suffix" else "video/$suffix",
             )
         } catch (e: java.lang.Exception) {
         }
