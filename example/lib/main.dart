@@ -114,8 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
     ByteData? byteData =
         await (image.toByteData(format: ui.ImageByteFormat.png));
     if (byteData != null) {
-      final result =
-          await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+      final result = await ImageGallerySaver.saveImage(
+          byteData.buffer.asUint8List(),
+          folder: "SaveImageToGallery");
       print(result);
       _toastInfo(result.toString());
     }
@@ -128,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await ImageGallerySaver.saveImage(
         Uint8List.fromList(response.data),
         quality: 60,
+        folder: "SaveImageToGallery",
         name: "hello");
     print(result);
     _toastInfo("$result");
@@ -139,7 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
     String fileUrl =
         "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
     await Dio().download(fileUrl, savePath);
-    final result = await ImageGallerySaver.saveFile(savePath);
+    final result = await ImageGallerySaver.saveFile(savePath,
+        folder: "SaveImageToGallery");
     print(result);
     _toastInfo("$result");
   }
@@ -148,11 +151,12 @@ class _MyHomePageState extends State<MyHomePage> {
     var appDocDir = await getTemporaryDirectory();
     String savePath = appDocDir.path + "/temp.mp4";
     String fileUrl =
-        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+        "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";
     await Dio().download(fileUrl, savePath, onReceiveProgress: (count, total) {
       print((count / total * 100).toStringAsFixed(0) + "%");
     });
-    final result = await ImageGallerySaver.saveFile(savePath);
+    final result = await ImageGallerySaver.saveFile(savePath,
+        folder: "SaveImageToGallery-Video");
     print(result);
     _toastInfo("$result");
   }
