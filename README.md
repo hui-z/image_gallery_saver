@@ -29,7 +29,7 @@ Add the following keys to your Info.plist file, located in <project root>/ios/Ru
 ## Example
 Saving an image from the internet, quality and name is option
 ``` dart
-_save() async {
+_saveImage() async {
    var response = await Dio().get(
            "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg",
            options: Options(responseType: ResponseType.bytes));
@@ -43,10 +43,10 @@ _save() async {
 
 Saving file(ig: video/gif/others) from the internet
 ``` dart
-_saveVideo() async {
+_saveFile() async {
     var appDocDir = await getTemporaryDirectory();
     String savePath = appDocDir.path + "/temp.mp4";
-    await Dio().download("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", savePath);
+    await Dio().download("https://s3.cn-north-1.amazonaws.com.cn/mtab.kezaihui.com/video/ForBiggerBlazes.mp4", savePath);
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
  }
