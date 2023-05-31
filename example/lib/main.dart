@@ -130,7 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
     String fileUrl =
         "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
     await Dio().download(fileUrl, savePath);
-    final result = await ImageGallerySaver.saveFile(savePath);
+    final result =
+        await ImageGallerySaver.saveFile(savePath, isReturnPathOfIOS: true);
     print(result);
     Utils.toast("$result");
   }
