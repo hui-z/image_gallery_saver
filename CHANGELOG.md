@@ -1,3 +1,9 @@
+## 2.0.1
+- 1.Upgrade flutter version to 3.10.2
+- 2.Upgrade Android/ios plug-in related
+- 3.Support Android 13
+- 4.Support ios16
+
 ## 1.7.1
 - optimization
 
