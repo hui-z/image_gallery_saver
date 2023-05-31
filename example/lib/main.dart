@@ -84,6 +84,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 300,
                 height: 44,
               ),
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                child: ElevatedButton(
+                  onPressed: _saveNetworkVideoFile,
+                  child: Text("Save Network Video"),
+                ),
+                width: 300,
+                height: 44,
+              ),
             ],
           ),
         ));
@@ -121,6 +130,19 @@ class _MyHomePageState extends State<MyHomePage> {
     String fileUrl =
         "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
     await Dio().download(fileUrl, savePath);
+    final result = await ImageGallerySaver.saveFile(savePath);
+    print(result);
+    Utils.toast("$result");
+  }
+
+  _saveNetworkVideoFile() async {
+    var appDocDir = await getTemporaryDirectory();
+    String savePath = appDocDir.path + "/temp.mp4";
+    String fileUrl =
+        "https://s3.cn-north-1.amazonaws.com.cn/mtab.kezaihui.com/video/ForBiggerBlazes.mp4";
+    await Dio().download(fileUrl, savePath, onReceiveProgress: (count, total) {
+      print((count / total * 100).toStringAsFixed(0) + "%");
+    });
     final result = await ImageGallerySaver.saveFile(savePath);
     print(result);
     Utils.toast("$result");
