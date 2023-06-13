@@ -1,3 +1,6 @@
+## 2.0.2
+- 1.Optimization android plugin
+
 ## 2.0.1
 - 1.Upgrade flutter version to 3.10.2
 - 2.Upgrade Android/ios plug-in related
