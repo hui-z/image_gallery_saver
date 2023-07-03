@@ -7,7 +7,7 @@ description: Demonstrates how to use the image_gallery_saver plugin.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 2.0.2+2
+version: 2.0.3+3
 
 environment:
   sdk: '>=2.19.6 <4.0.0'
