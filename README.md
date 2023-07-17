@@ -79,3 +79,20 @@ Saving file(ig: video/gif/others) from the internet
     print(result);
   }
 ```
+
+Download using http package
+``` dart
+Future<void> downloadImage(String urlString) async {
+  final url = Uri.parse(urlString);
+  final client = http.Client();
+  final request = http.Request('GET', url);
+  final response = await client.send(request);
+  final stream = response.stream;
+  List<int> imageData = [];
+  await for (final data in stream) {
+    imageData.addAll(data);
+  }
+  client.close();
+  await ImageGallerySaver.saveImage(Uint8List.fromList(imageData));
+}
+```
