@@ -13,12 +13,14 @@ class ImageGallerySaver {
   static FutureOr<dynamic> saveImage(Uint8List imageBytes,
       {int quality = 80,
       String? name,
+      String? albumName,
       bool isReturnImagePathOfIOS = false}) async {
     final result =
         await _channel.invokeMethod('saveImageToGallery', <String, dynamic>{
       'imageBytes': imageBytes,
       'quality': quality,
       'name': name,
+      'albumName': albumName,
       'isReturnImagePathOfIOS': isReturnImagePathOfIOS
     });
     return result;
