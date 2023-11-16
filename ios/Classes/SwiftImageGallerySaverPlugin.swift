@@ -21,10 +21,11 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             let image = UIImage(data: imageData),
             let quality = arguments["quality"] as? Int,
             let _ = arguments["name"],
+            let albumName = arguments["albumName"] as? String,
             let isReturnImagePath = arguments["isReturnImagePathOfIOS"] as? Bool
             else { return }
         let newImage = image.jpegData(compressionQuality: CGFloat(quality / 100))!
-        saveImage(UIImage(data: newImage) ?? image, isReturnImagePath: isReturnImagePath)
+        saveImage(UIImage(data: newImage) ?? image, isReturnImagePath: isReturnImagePath , customAlbumName: albumName)
       } else if (call.method == "saveFileToGallery") {
         guard let arguments = call.arguments as? [String: Any],
               let path = arguments["file"] as? String,
@@ -75,8 +76,8 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
         })
     }
     
-    func saveImage(_ image: UIImage, isReturnImagePath: Bool) {
-        if !isReturnImagePath {
+    func saveImage(_ image: UIImage, isReturnImagePath: Bool , customAlbumName: String) {
+        if !isReturnImagePath && customAlbumName == "" {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(didFinishSavingImage(image:error:contextInfo:)), nil)
             return
         }
@@ -84,8 +85,20 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
         var imageIds: [String] = []
         
         PHPhotoLibrary.shared().performChanges( {
+            var assetCollectionChangeRequest: PHAssetCollectionChangeRequest?
+            let assetCollection = self.fetchAssetCollectionForAlbum(customAlbumName)
+            
+            if assetCollection == nil {
+                assetCollectionChangeRequest = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: customAlbumName)
+            } else {
+                assetCollectionChangeRequest = PHAssetCollectionChangeRequest(for: assetCollection!)
+            }
+
             let req = PHAssetChangeRequest.creationRequestForAsset(from: image)
-            if let imageId = req.placeholderForCreatedAsset?.localIdentifier {
+            let assetPlaceholder = req.placeholderForCreatedAsset
+            assetCollectionChangeRequest?.addAssets([assetPlaceholder!] as NSFastEnumeration)
+
+            if let imageId = assetPlaceholder?.localIdentifier {
                 imageIds.append(imageId)
             }
         }, completionHandler: { [unowned self] (success, error) in
@@ -100,14 +113,22 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                         imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
                             if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
                                 self.saveResult(isSuccess: true, filePath: urlStr)
-                            }
-                        }
+                                                    }
                     }
+                }
                 } else {
                     self.saveResult(isSuccess: false, error: self.errorMessage)
                 }
             }
         })
+    }
+
+    func fetchAssetCollectionForAlbum(_ albumName: String) -> PHAssetCollection? {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = NSPredicate(format: "title = %@", albumName)
+        let fetchResult: PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
+        
+        return fetchResult.firstObject
     }
     
     func saveImageAtFileUrl(_ url: String, isReturnImagePath: Bool) {
