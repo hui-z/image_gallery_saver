@@ -192,7 +192,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
 
         try {
             resolver.openOutputStream(uri).use { out ->
-                if (!image.compress(Bitmap.CompressFormat.PNG, 100, out)) {
+                if (!image.compress(Bitmap.CompressFormat.PNG, 100, out!!)) {
                     return SaveResultModel(false, null, "").toHashMap()
                 }
             }
