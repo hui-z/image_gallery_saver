@@ -48,7 +48,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.imagegallerysaverexample"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
