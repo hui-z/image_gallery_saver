@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BIDERAFT es el servidor definitivo de Minecraft. Únete a nosotros para una experiencia inolvidable.">
+    <title>BIDERAFT</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Favicon local -->
+    <style>
+        body {
+            background-color: #1c1c1c; /* Fondo oscuro */
+            color: #e0e0e0; /* Texto claro */
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 4em;
+            margin: 0.5em 0;
+            text-align: center;
+            color: #ffcc00; /* Amarillo suave */
+        }
+        h2 {
+            font-size: 2em;
+            color: #b0b0b0; /* Gris claro */
+            margin-bottom: 1em;
+            text-align: center;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            color: #fff;
+            background-color: #ffcc00; /* Amarillo */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 2em;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+        }
+        .button:hover {
+            background-color: #e6b800; /* Más oscuro en hover */
+        }
+        .info-section {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+        .info-section p {
+            font-size: 1.2em;
+            margin: 0.3em 0;
+        }
+        .rules-section {
+            font-size: 1.2em;
+            margin-bottom: 2em;
+        }
+        .discord-link, .server-info {
+            font-size: 1.5em;
+            margin-bottom: 1em;
+        }
+        .server-info span {
+            display: block;
+        }
+        .image-container img {
+            max-width: 100%; /* Escala imagen */
+            height: auto; /* Mantén proporciones */
+            border-radius: 10px;
+            border: 2px solid #444; /* Borde gris */
+        }
+        @media (max-width: 600px) {
+            .image-container img {
+                max-width: 80%; /* Escala en móviles */
+            }
+            h1 {
+                font-size: 3em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            .button {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>BIDERAFT</h1>
+    <h2>El servidor definitivo de Minecraft</h2>
+
+    <button class="button" onclick="alert('Conéctate a la IP y el puerto que aparecen abajo')">Jugar Ahora</button>
+
+    <div class="info-section">
+        <h3>Reglas del servidor:</h3>
+        <div class="rules-section">
+            <p>1. No hacer trampas.</p>
+            <p>2. Respeta a los demás jugadores.</p>
+            <p>3. No usar hacks o mods prohibidos.</p>
+            <p>4. No spamear en el chat.</p>
+        </div>
+
+        <div class="discord-link">
+            <p>Únete a nuestro Discord:</p>
+            <a href="https://discord.gg/E6sZCPazHx" style="color: #7289da;">discord.gg/E6sZCPazHx</a>
+        </div>
+
+        <div class="server-info">
+            <p>IP del servidor: <span id="server-ip">BIDERAFT.ATERNOS.ME</span></p>
+            <p>Puerto: <span id="server-port">20835</span></p>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <img src="imagen.jpg" alt="Imagen de BIDERAFT" /> <!-- Usa una imagen local -->
+    </div>
+
+</body>
+</html>
