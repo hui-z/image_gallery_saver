@@ -1,3 +1,7 @@
+## 2.0.4
+
+- Removes references to Flutter v1 android embedding classes.
+
 ## 2.0.3
 - 1.Upgrade flutter version to 3.10.5
 - 2.Android build tools are upgraded to 7.3.0
