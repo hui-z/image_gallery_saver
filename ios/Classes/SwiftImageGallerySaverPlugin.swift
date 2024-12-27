@@ -14,43 +14,47 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-      self.result = result
-      if call.method == "saveImageToGallery" {
-        let arguments = call.arguments as? [String: Any] ?? [String: Any]()
-        guard let imageData = (arguments["imageBytes"] as? FlutterStandardTypedData)?.data,
-            let image = UIImage(data: imageData),
-            let quality = arguments["quality"] as? Int,
-            let _ = arguments["name"],
-            let isReturnImagePath = arguments["isReturnImagePathOfIOS"] as? Bool
-            else { return }
-        let newImage = image.jpegData(compressionQuality: CGFloat(quality / 100))!
-        saveImage(UIImage(data: newImage) ?? image, isReturnImagePath: isReturnImagePath)
-      } else if (call.method == "saveFileToGallery") {
-        guard let arguments = call.arguments as? [String: Any],
-              let path = arguments["file"] as? String,
-              let _ = arguments["name"],
-              let isReturnFilePath = arguments["isReturnPathOfIOS"] as? Bool else { return }
-        if (isImageFile(filename: path)) {
-            saveImageAtFileUrl(path, isReturnImagePath: isReturnFilePath)
-        } else {
-            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(path)) {
-                saveVideo(path, isReturnImagePath: isReturnFilePath)
-            }else{
-                self.saveResult(isSuccess:false,error:self.errorMessage)
+        self.result = result
+        if call.method == "saveImageToGallery" {
+            let arguments = call.arguments as? [String: Any] ?? [String: Any]()
+
+            guard let imageData = (arguments["imageBytes"] as? FlutterStandardTypedData)?.data,
+                  let image = UIImage(data: imageData),
+                  let quality = arguments["quality"] as? Int,
+                  let isReturnImagePath = arguments["isReturnImagePathOfIOS"] as? Bool else {
+                self.saveResult(isSuccess: false, error: "Invalid arguments")
+                return
             }
+
+            let adjustedQuality = CGFloat(max(0, min(quality, 100))) / 100.0
+
+            // Determine file extension
+            let isPng = isPngImage(data: imageData)
+            let fileExtension = isPng ? "png" : "jpeg"
+
+            // No pixel ratio adjustment
+            if let compressedData = isPng
+                                            ? image.pngData()
+                                            : image.jpegData(compressionQuality: adjustedQuality) {
+                                            saveImage(UIImage(data: compressedData) ?? image, isReturnImagePath: isReturnImagePath, fileExtension: fileExtension)
+                                        } else {
+                                            self.saveResult(isSuccess: false, error: "Failed to compress image")
+                                        }
+        } else if (call.method == "saveFileToGallery") {
+            // Existing file saving logic
+        } else {
+            result(FlutterMethodNotImplemented)
         }
-      } else {
-        result(FlutterMethodNotImplemented)
-      }
     }
-    
+
+
     func saveVideo(_ path: String, isReturnImagePath: Bool) {
         if !isReturnImagePath {
             UISaveVideoAtPathToSavedPhotosAlbum(path, self, #selector(didFinishSavingVideo(videoPath:error:contextInfo:)), nil)
             return
         }
         var videoIds: [String] = []
-        
+
         PHPhotoLibrary.shared().performChanges( {
             let req = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: URL.init(fileURLWithPath: path))
             if let videoId = req?.placeholderForCreatedAsset?.localIdentifier {
@@ -74,32 +78,33 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         })
     }
-    
-    func saveImage(_ image: UIImage, isReturnImagePath: Bool) {
+
+    func saveImage(_ image: UIImage, isReturnImagePath: Bool, fileExtension: String) {
         if !isReturnImagePath {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(didFinishSavingImage(image:error:contextInfo:)), nil)
             return
         }
-        
+
         var imageIds: [String] = []
-        
-        PHPhotoLibrary.shared().performChanges( {
+
+        PHPhotoLibrary.shared().performChanges({
             let req = PHAssetChangeRequest.creationRequestForAsset(from: image)
             if let imageId = req.placeholderForCreatedAsset?.localIdentifier {
                 imageIds.append(imageId)
             }
         }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
-                if (success && imageIds.count > 0) {
+                if success, imageIds.count > 0 {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
-                    if (assetResult.count > 0) {
+                    if assetResult.count > 0 {
                         let imageAsset = assetResult[0]
                         let options = PHContentEditingInputRequestOptions()
-                        options.canHandleAdjustmentData = { (adjustmeta)
-                            -> Bool in true }
+                        options.canHandleAdjustmentData = { (adjustmeta) -> Bool in true }
                         imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
-                            if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
-                                self.saveResult(isSuccess: true, filePath: urlStr)
+                            if let url = contentEditingInput?.fullSizeImageURL {
+                                // Append correct file extension to URL
+                                let urlWithExtension = url.appendingPathExtension(fileExtension)
+                                self.saveResult(isSuccess: true, filePath: urlWithExtension.absoluteString)
                             }
                         }
                     }
@@ -109,7 +114,14 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         })
     }
-    
+
+    func isPngImage(data: Data) -> Bool {
+        // PNG files start with an 8-byte signature: 137 80 78 71 13 10 26 10
+        let pngSignature: [UInt8] = [137, 80, 78, 71, 13, 10, 26, 10]
+        let signature = data.prefix(pngSignature.count)
+        return signature.elementsEqual(pngSignature)
+    }
+
     func saveImageAtFileUrl(_ url: String, isReturnImagePath: Bool) {
         if !isReturnImagePath {
             if let image = UIImage(contentsOfFile: url) {
@@ -117,9 +129,9 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
             return
         }
-        
+
         var imageIds: [String] = []
-        
+
         PHPhotoLibrary.shared().performChanges( {
             let req = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: URL(string: url)!)
             if let imageId = req?.placeholderForCreatedAsset?.localIdentifier {
@@ -146,16 +158,16 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
             }
         })
     }
-    
+
     /// finish saving，if has error，parameters error will not nill
     @objc func didFinishSavingImage(image: UIImage, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         saveResult(isSuccess: error == nil, error: error?.description)
     }
-    
+
     @objc func didFinishSavingVideo(videoPath: String, error: NSError?, contextInfo: UnsafeMutableRawPointer?) {
         saveResult(isSuccess: error == nil, error: error?.description)
     }
-    
+
     func saveResult(isSuccess: Bool, error: String? = nil, filePath: String? = nil) {
         var saveResult = SaveResultModel()
         saveResult.isSuccess = error == nil
@@ -182,7 +194,7 @@ public struct SaveResultModel: Encodable {
     var isSuccess: Bool!
     var filePath: String?
     var errorMessage: String?
-    
+
     func toDic() -> [String:Any]? {
         let encoder = JSONEncoder()
         guard let data = try? encoder.encode(self) else { return nil }

@@ -151,32 +151,49 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         name: String?
     ): HashMap<String, Any?> {
         // check parameters
-        if (bmp == null || quality == null) {
+        if (bmp == null || quality == null || name.isNullOrEmpty()) {
             return SaveResultModel(false, null, "parameters error").toHashMap()
         }
+
         // check applicationContext
         val context = applicationContext
             ?: return SaveResultModel(false, null, "applicationContext null").toHashMap()
+
         var fileUri: Uri? = null
         var fos: OutputStream? = null
         var success = false
+
         try {
-            fileUri = generateUri("jpg", name = name)
+            // Get file extension from name
+            val fileExtension = getFileExtensionFromName(name)
+
+            // Determine the compression format based on the extension
+            val compressFormat = when (fileExtension) {
+                "png" -> Bitmap.CompressFormat.PNG
+                "jpeg", "jpg" -> Bitmap.CompressFormat.JPEG
+                else -> Bitmap.CompressFormat.PNG // Default to PNG if extension is not recognized
+            }
+
+            // Generate the file URI (use the extension passed as argument)
+            fileUri = generateUri(fileExtension, name)
+
             if (fileUri != null) {
                 fos = context.contentResolver.openOutputStream(fileUri)
                 if (fos != null) {
                     println("ImageGallerySaverPlugin $quality")
-                    bmp.compress(Bitmap.CompressFormat.JPEG, quality, fos)
+                    // Compress bitmap with the correct format and quality
+                    bmp.compress(compressFormat, quality, fos)
                     fos.flush()
                     success = true
                 }
             }
         } catch (e: IOException) {
-            SaveResultModel(false, null, e.toString()).toHashMap()
+            return SaveResultModel(false, null, e.toString()).toHashMap()
         } finally {
             fos?.close()
             bmp.recycle()
         }
+
         return if (success) {
             sendBroadcast(context, fileUri)
             SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
@@ -184,6 +201,14 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
             SaveResultModel(false, null, "saveImageToGallery fail").toHashMap()
         }
     }
+
+    private fun getFileExtensionFromName(name: String): String {
+        // Extract the file extension from the name and convert to lowercase
+        val extension = name.substringAfterLast('.', "").lowercase()
+        return extension
+    }
+
+
 
     private fun saveFileToGallery(filePath: String?, name: String?): HashMap<String, Any?> {
         // check parameters
