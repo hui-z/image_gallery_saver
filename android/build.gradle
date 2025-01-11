@@ -2,7 +2,7 @@ group 'com.example.imagegallerysaver'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
         mavenCentral()
@@ -13,6 +13,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+apply plugin: 'kotlin-android'
 
 rootProject.allprojects {
     repositories {
@@ -25,8 +26,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
-
+    compileSdkVersion 33
+    namespace 'com.example.imagegallerysaver'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -34,11 +39,15 @@ android {
         minSdkVersion 16
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    kotlinOptions {
+        jvmTarget = '17'  // Ensure Kotlin targets Java 17
+    }
     lintOptions {
         disable 'InvalidPackage'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
 }
