@@ -103,6 +103,11 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                             }
                         }
                     }
+                    // PHAuthorizationStatus restricts access to asset
+                    // save the result otherwise this will result in a never ending await at the flutter side
+                    else {
+                        self.saveResult(isSuccess: false, error: self.errorMessage)
+                    }
                 } else {
                     self.saveResult(isSuccess: false, error: self.errorMessage)
                 }
@@ -139,6 +144,11 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                                 self.saveResult(isSuccess: true, filePath: urlStr)
                             }
                         }
+                    }
+                    // PHAuthorizationStatus restricts access to asset
+                    // save the result otherwise this will result in a never ending await at the flutter side
+                    else {
+                        self.saveResult(isSuccess: false, error: self.errorMessage)
                     }
                 } else {
                     self.saveResult(isSuccess: false, error: self.errorMessage)
