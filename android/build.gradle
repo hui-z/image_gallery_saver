@@ -25,10 +25,14 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    namespace = 'com.example.gallery_saver_updated  '
     compileSdkVersion 30
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
     defaultConfig {
         minSdkVersion 16
