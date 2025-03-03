@@ -1,1 +1,2 @@
 rootProject.name = 'image_gallery_saver'
+include ':image_gallery_saver'

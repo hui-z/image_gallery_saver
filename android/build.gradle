@@ -1,4 +1,4 @@
-group 'com.example.imagegallerysaver'
+group 'com.example.testsupa2'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -25,20 +25,47 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
+    // ✅ Ajout du namespace obligatoire
+    namespace "com.example.testsupa2"
+
+    compileSdkVersion 35  // ✅ Mise à jour pour assurer la compatibilité avec les plugins récents
+
+    compileOptions {
+        // ✅ Forcer l'utilisation de Java 17
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17" // ✅ Aligner Kotlin sur Java 17
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
     defaultConfig {
         minSdkVersion 16
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lintOptions {
         disable 'InvalidPackage'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version" // ✅ Mise à jour pour JDK 8+
+}
+
+// ✅ Appliquer Java 17 à toutes les dépendances pour éviter les conflits
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }

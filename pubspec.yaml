@@ -20,7 +20,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.imagegallerysaver
+        package: com.example.testsupa2
         pluginClass: ImageGallerySaverPlugin
       ios:
         pluginClass: ImageGallerySaverPlugin
