@@ -64,7 +64,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                         let videoAsset = assetResult[0]
                         PHImageManager().requestAVAsset(forVideo: videoAsset, options: nil) { (avurlAsset, audioMix, info) in
                             if let urlStr = (avurlAsset as? AVURLAsset)?.url.absoluteString {
-                                self.saveResult(isSuccess: true, filePath: urlStr)
+                                self.saveResult(isSuccess: true, filePath: urlStr, id: videoAsset.localIdentifier)
                             }
                         }
                     }
@@ -99,7 +99,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                             -> Bool in true }
                         imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
                             if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
-                                self.saveResult(isSuccess: true, filePath: urlStr)
+                                self.saveResult(isSuccess: true, filePath: urlStr, id: imageAsset.localIdentifier)
                             }
                         }
                     }
@@ -136,7 +136,7 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
                             -> Bool in true }
                         imageAsset.requestContentEditingInput(with: options) { [unowned self] (contentEditingInput, info) in
                             if let urlStr = contentEditingInput?.fullSizeImageURL?.absoluteString {
-                                self.saveResult(isSuccess: true, filePath: urlStr)
+                                self.saveResult(isSuccess: true, filePath: urlStr, id: imageAsset.localIdentifier)
                             }
                         }
                     }
@@ -156,11 +156,12 @@ public class SwiftImageGallerySaverPlugin: NSObject, FlutterPlugin {
         saveResult(isSuccess: error == nil, error: error?.description)
     }
     
-    func saveResult(isSuccess: Bool, error: String? = nil, filePath: String? = nil) {
+    func saveResult(isSuccess: Bool, error: String? = nil, filePath: String? = nil, id: String? = nil) {
         var saveResult = SaveResultModel()
         saveResult.isSuccess = error == nil
         saveResult.errorMessage = error?.description
         saveResult.filePath = filePath
+        saveResult.id = id
         result?(saveResult.toDic())
     }
 
@@ -182,6 +183,7 @@ public struct SaveResultModel: Encodable {
     var isSuccess: Bool!
     var filePath: String?
     var errorMessage: String?
+    var id: String?
     
     func toDic() -> [String:Any]? {
         let encoder = JSONEncoder()
