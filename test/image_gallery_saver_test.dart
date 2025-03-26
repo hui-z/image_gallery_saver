@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -20,11 +19,11 @@ void main() {
     log.clear();
   });
 
-
   test('saveImageToGallery test', () async {
     response = true;
     Uint8List imageBytes = Uint8List(16);
-    final bool? result = await (ImageGallerySaver.saveImage(imageBytes) as FutureOr<dynamic>);
+    final bool? result =
+        await (ImageGallerySaver.saveImage(imageBytes) as FutureOr<dynamic>);
     expect(
       log,
       <Matcher>[
@@ -38,5 +37,4 @@ void main() {
     );
     expect(result, response);
   });
-
 }
