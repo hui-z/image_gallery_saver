@@ -25,6 +25,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    //update namespace
+    namespace 'com.example.imagegallerysaver'
     compileSdkVersion 30
 
     sourceSets {
