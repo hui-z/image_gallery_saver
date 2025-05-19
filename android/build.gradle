@@ -25,7 +25,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
+    if (project.android.hasProperty("namespace")) {
+        namespace = "com.example.imagegallerysaver"
+    }
+    
+    // compileSdkVersion 30
+    compileSdk 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

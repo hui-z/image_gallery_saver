@@ -10,15 +10,20 @@ class ImageGallerySaver {
   /// imageBytes can't null
   /// return Map type
   /// for example:{"isSuccess":true, "filePath":String?}
-  static FutureOr<dynamic> saveImage(Uint8List imageBytes,
-      {int quality = 80,
-      String? name,
-      bool isReturnImagePathOfIOS = false}) async {
+  /// [quality] iOS only support jpg for, Android support jpg and png
+  static FutureOr<dynamic> saveImage(
+    Uint8List imageBytes, {
+    int quality = 80,
+    String? name,
+    ImageType imageType = ImageType.png,
+    bool isReturnImagePathOfIOS = false,
+  }) async {
     final result =
         await _channel.invokeMethod('saveImageToGallery', <String, dynamic>{
       'imageBytes': imageBytes,
       'quality': quality,
       'name': name,
+      'imageType': imageType.name,
       'isReturnImagePathOfIOS': isReturnImagePathOfIOS
     });
     return result;
@@ -35,4 +40,9 @@ class ImageGallerySaver {
     });
     return result;
   }
+}
+
+enum ImageType {
+  png,
+  jpg,
 }
