@@ -1,3 +1,9 @@
+## 2.0.4
+- 1.Upgrade flutter version to 3.10.5
+- 2.Android build tools are upgraded to 8.x.x
+- 3.Optimize the Android plugin library code
+- 4.Update namespace
+
 ## 2.0.3
 - 1.Upgrade flutter version to 3.10.5
 - 2.Android build tools are upgraded to 7.3.0
