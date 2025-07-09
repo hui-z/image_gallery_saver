@@ -1,10 +1,7 @@
-package com.example.imagegallerysaver
+package com.lazyarts.vikram.imagegallerysaver
 
-import androidx.annotation.NonNull
-import android.annotation.TargetApi
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
@@ -13,12 +10,10 @@ import android.os.Environment
 import android.os.Build
 import android.provider.MediaStore
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -30,13 +25,13 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var methodChannel: MethodChannel
     private var applicationContext: Context? = null
 
-    override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         this.applicationContext = binding.applicationContext
         methodChannel = MethodChannel(binding.binaryMessenger, "image_gallery_saver")
         methodChannel.setMethodCallHandler(this)
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall,@NonNull result: Result): Unit {
+    override fun onMethodCall(call: MethodCall,result: Result): Unit {
         when (call.method) {
             "saveImageToGallery" -> {
                 val image = call.argument<ByteArray?>("imageBytes")
@@ -64,13 +59,13 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         applicationContext = null
         methodChannel.setMethodCallHandler(null);
     }
 
     private fun generateUri(extension: String = "", name: String? = null): Uri? {
-        var fileName = name ?: System.currentTimeMillis().toString()
+        val fileName = name ?: System.currentTimeMillis().toString()
         val mimeType = getMIMEType(extension)
         val isVideo = mimeType?.startsWith("video")==true
 
@@ -138,10 +133,9 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
      * @param fileUri file path
      */
     private fun sendBroadcast(context: Context, fileUri: Uri?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            mediaScanIntent.data = fileUri
-            context.sendBroadcast(mediaScanIntent)
+        fileUri?.path?.let { path ->
+            MediaScannerConnection.scanFile(
+                context, arrayOf(path), null, null)
         }
     }
 
@@ -210,7 +204,7 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
                     fileInputStream = FileInputStream(originalFile)
 
                     val buffer = ByteArray(10240)
-                    var count = 0
+                    var count: Int
                     while (fileInputStream.read(buffer).also { count = it } > 0) {
                         outputStream.write(buffer, 0, count)
                     }
@@ -234,9 +228,10 @@ class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
     }
 }
 
-class SaveResultModel(var isSuccess: Boolean,
-                      var filePath: String? = null,
-                      var errorMessage: String? = null) {
+class SaveResultModel(
+    private var isSuccess: Boolean,
+    private var filePath: String? = null,
+    private var errorMessage: String? = null) {
     fun toHashMap(): HashMap<String, Any?> {
         val hashMap = HashMap<String, Any?>()
         hashMap["isSuccess"] = isSuccess

@@ -58,8 +58,6 @@ Color _getActionColor(ActionType type) {
       return HColors.mediumGrey;
     case ActionType.positive:
       return HColors.primary;
-    default:
-      return HColors.primary;
   }
 }
 

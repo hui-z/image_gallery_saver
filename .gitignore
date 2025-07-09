@@ -11,3 +11,5 @@ pubspec.lock
 build/
 
 *.iml
+example/.gradle
+example/android/app/.cxx
